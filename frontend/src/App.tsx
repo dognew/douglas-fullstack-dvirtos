@@ -1,35 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import BiosScreen from './components/boot/BiosScreen';
 
-function App() {
-  const [count, setCount] = useState(0)
+type BootStage = 'BIOS' | 'GRUB' | 'DESKTOP';
+
+export default function App() {
+  const [stage, setStage] = useState<BootStage>('BIOS');
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="bg-black min-h-screen text-white font-mono overflow-hidden">
+      {/* O componente só existe enquanto o estado for BIOS */}
+      {stage === 'BIOS' && <BiosScreen onComplete={() => setStage('GRUB')} />}
+      
+      {stage === 'GRUB' && (
+        <div className="p-10">
+          <p className="text-blue-400">GNU GRUB version 2.06</p>
+          <p className="mt-4">Carregando DogNew WebOS...</p>
+          <button 
+            onClick={() => setStage('DESKTOP')} 
+            className="mt-6 border border-white px-2 hover:bg-white hover:text-black transition-colors"
+          >
+            [ ENTER ]
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
-
-export default App
