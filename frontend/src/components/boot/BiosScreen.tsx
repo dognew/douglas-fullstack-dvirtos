@@ -78,10 +78,10 @@ export default function BiosScreen({ onComplete }: { onComplete: () => void }) {
           </pre>
         </div>
         <div className="col-span-12 md:col-span-6 lg:col-span-7 xl:col-span-8 2xl:col-span-9 break-words pt-2 text-center md:text-left">
-          <h1 className="text-4xl tracking-tighter text-blue-800 font-bold lg:text-6xl xl:text-7xl 2xl:text-8xl">
+          <h1 className="text-4xl tracking-tighter text-blue-800 font-eightbit font-bold lg:text-6xl xl:text-7xl 2xl:text-8xl">
             DOUGLAS FIEDLER
           </h1>
-          <p className="text-xl text-gray-400 lg:text-2xl xl:text-3xl 2xl:text-4xl">
+          <p className="font-eightbit text-xl text-gray-400 lg:text-2xl xl:text-3xl 2xl:text-4xl">
             DogNew Informática
           </p>
         </div>
