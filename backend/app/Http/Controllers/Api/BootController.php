@@ -71,9 +71,10 @@ class BootController extends Controller
             // 3. Lógica de Placa-Mãe Profissional (Condicional de Engenharia)
 
             $boardPath = '/sys/class/dmi/id/board_name';
+            $vendorPath = '/sys/class/dmi/id/board_vendor';
 
             $boardName = file_exists($boardPath) ? trim(@file_get_contents($boardPath)) : '';
-
+            $vendor = file_exists($vendorPath) ? trim(@file_get_contents($vendorPath)) : '';
 
 
             // Se o dado for bloqueado (HostGator) ou for genérico, aplicamos o Fallback Coerente
@@ -96,9 +97,11 @@ class BootController extends Controller
 
             } else {
 
-                $vendor = trim(@file_get_contents('/sys/class/dmi/id/board_vendor'));
-
-                $fallback['motherboard'] = "$vendor $boardName";
+                if (empty($vendor) || stripos($vendor, 'DEFAULT') !== false) {
+                    $fallback['motherboard'] = "INTEL X99 CHIPSET SERIES"; 
+                } else {
+                    $fallback['motherboard'] = "$vendor $boardName";
+                }
 
             }
 
