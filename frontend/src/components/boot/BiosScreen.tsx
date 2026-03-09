@@ -16,13 +16,13 @@ export default function BiosScreen({ onComplete }: { onComplete: () => void }) {
       .catch(() => {
         // Agora o plano B (Fallback) sempre funcionará se a API falhar
         setSpecs({
-          bios_name: 'MEGABIOS(C) 2026',
-          vendor: 'DogNew Informática, MEI',
-          cpu: 'Intel(R) Xeon(R) Gold 5318Y CPU @ 2.10GHz',
-          speed: '2100MHz',
-          ram: '28.74 GB (DDR4-3000)',
-          storage: 'NVME: Samsung 980 Pro 1TB',
-          motherboard: 'HUANANZHI X99-TF Gaming Motherboard'
+          bios_name: 'MEGABIOS(FALLBACK) 2026',
+          vendor: 'DogNew Informática, MEI [F]',
+          cpu: 'Intel(R) Xeon(R) Gold 5318Y CPU [F] @ 2.10GHz',
+          speed: '2100MHz (FAKE)',
+          ram: '28.74 GB (DDR4-3000 VIRTUAL)',
+          storage: 'NVME: Samsung 980 Pro 1TB [F]',
+          motherboard: 'HUANANZHI X99-TF Gaming Motherboard (FALLBACK MODE)'
         });
       });
   }, []);
