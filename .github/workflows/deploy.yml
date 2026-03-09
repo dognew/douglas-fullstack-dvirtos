@@ -33,13 +33,20 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: ./
+          dry-run: false 
           exclude: |
-            **/.git*
-            **/.github*
+            .git*
+            .github*
             **/node_modules/**
-            **/frontend/src/**
-            **/backend/tests/**
-            **/.env
-            **/storage/*.sqlite
+            frontend/src/**
+            frontend/public/**
+            backend/tests/**
+            backend/vendor/**
+            .env
             docker-compose.yml
             Dockerfile
+            README.md
+            LEIAME.md
+            LICENSE
+            Makefile
+            makefile
