@@ -1,4 +1,4 @@
-name: Deploy DogNew WebOS
+name: Deploy D-VirtOS
 
 on:
   push:

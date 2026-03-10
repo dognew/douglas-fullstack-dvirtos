@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\BootController;
 Route::get('/', function () {
     return response()->json([
         'status' => 'online',
-        'service' => 'DogNew WebOS API',
+        'service' => 'D-VirtOS API',
         'version' => '1.0.0'
     ]);
 });

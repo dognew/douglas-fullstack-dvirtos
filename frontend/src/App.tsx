@@ -14,7 +14,7 @@ export default function App() {
       {stage === 'GRUB' && (
         <div className="p-10">
           <p className="text-blue-400">GNU GRUB version 2.06</p>
-          <p className="mt-4">Carregando DogNew WebOS...</p>
+          <p className="mt-4">Carregando D-VirtOS...</p>
           <button 
             onClick={() => setStage('DESKTOP')} 
             className="mt-6 border border-white px-2 hover:bg-white hover:text-black transition-colors"
