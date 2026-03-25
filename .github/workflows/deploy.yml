@@ -41,7 +41,6 @@ jobs:
             frontend/src/**
             frontend/public/**
             backend/tests/**
-            backend/vendor/**
             .env
             docker-compose.yml
             Dockerfile
