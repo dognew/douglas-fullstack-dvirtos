@@ -19,6 +19,16 @@
     );
     background-size: 100% 4px;
   }
+
+  /* Hides scrollbar across all major engines */
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox & Modern Chrome/Edge */
+    -ms-overflow-style: none; /* Legacy IE/Edge */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Legacy WebKit (Chrome, Safari, Opera) */
+  }
 }
 
 /* Defeito constante e frenético */
