@@ -25,18 +25,21 @@ jobs:
           cd backend
           composer install --no-dev --optimize-autoloader
 
-      - name: 🚀 Sync Files to HostGator
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      - name: 🚀 Deploy via Rsync (SSH)
+        uses: Burnett01/rsync-deployments@7.0.1
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: ./
-          dry-run: false 
+          switches: -avzr --delete
+          path: ./
+          remote_path: ${{ secrets.SSH_REMOTE_PATH }}
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
           exclude: |
             .git*
             .github*
+            .ssh/
+            cgi-bin/
             **/node_modules/**
             frontend/src/**
             frontend/public/**
