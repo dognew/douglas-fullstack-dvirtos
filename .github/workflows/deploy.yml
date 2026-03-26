@@ -44,7 +44,7 @@ jobs:
             --exclude='frontend/src/**'
             --exclude='frontend/public/**'
             --exclude='backend/tests/**'
-            --exclude='.env'
+            --exclude='**/.env'
             --exclude='docker-compose.yml'
             --exclude='Dockerfile'
             --exclude='README.md'
