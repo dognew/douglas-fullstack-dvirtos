@@ -3,13 +3,26 @@ import ExitModal from './ExitModal';
 
 export default function BiosSetup({ onExit, specs }: { onExit: () => void, specs: any }) {
   const [showExitModal, setShowExitModal] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowExitModal(true);
+      // ESC and F10 key trigger
+      if (e.code === 'Escape' || e.key === 'F10') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        setShowExitModal(true);
+      }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+
+    window.addEventListener('keydown', handleKeyDown, true);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+      clearInterval(timer);
+    };
   }, []);
 
   return (
@@ -22,12 +35,17 @@ export default function BiosSetup({ onExit, specs }: { onExit: () => void, specs
 
       {/* Top menu */}
       <div className="flex gap-8 px-4 py-1 bg-gray-400/20 mb-2 border-b border-gray-500">
-        <span className="bg-gray-100 text-[#0000AA] px-2">Main</span>
-        <span>Advanced</span>
-        <span>Security</span>
-        <span>Power</span>
-        <span>Boot</span>
-        <span>Exit</span>
+        <span className="bg-gray-100 text-[#0000AA] px-2 cursor-default">Main</span>
+        <span className="cursor-pointer hover:text-white">Advanced</span>
+        <span className="cursor-pointer hover:text-white">Security</span>
+        <span className="cursor-pointer hover:text-white">Power</span>
+        <span className="cursor-pointer hover:text-white">Boot</span>
+        <span 
+          onClick={() => setShowExitModal(true)} 
+          className="cursor-pointer hover:bg-gray-300 hover:text-[#0000AA] px-2 transition-colors"
+        >
+          Exit
+        </span>
       </div>
 
       {/* Content Main */}
@@ -35,11 +53,15 @@ export default function BiosSetup({ onExit, specs }: { onExit: () => void, specs
         <div className="w-2/3 space-y-4">
           <div className="flex justify-between w-[500px]">
             <span>System Time</span>
-            <span className="text-white">[{new Date().toLocaleTimeString()}]</span>
+            <span className="text-white">
+              [{currentTime.toLocaleTimeString('pt-BR', { hour12: false })}]
+            </span>
           </div>
           <div className="flex justify-between w-[500px]">
             <span>System Date</span>
-            <span className="text-white">[{new Date().toLocaleDateString()}]</span>
+            <span className="text-white">
+              [{currentTime.toLocaleDateString('pt-BR')}]
+            </span>
           </div>
           
           <div className="mt-12 space-y-2 border-t border-gray-600 pt-6">
