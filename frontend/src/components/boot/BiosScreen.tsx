@@ -1,31 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-export default function BiosScreen({ onComplete }: { onComplete: () => void }) {
-  const [specs, setSpecs] = useState<any>(null);
+export default function BiosScreen({ onComplete, onEnterSetup, specs }: {
+  onComplete: () => void,
+  onEnterSetup: () => void,
+  specs: any
+}) {
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete') {
+        if (typeof onEnterSetup === 'function') {
+          onEnterSetup();
+        }
+      }
+    };
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+    window.addEventListener('keydown', handleKeyDown);
 
-    fetch(`${apiUrl}/boot-specs`)
-      .then(res => {
-        if (!res.ok) throw new Error("Erro na API");
-        return res.json();
-      })
-      .then(data => setSpecs(data))
-      .catch(() => {
-        // Agora o plano B (Fallback) sempre funcionará se a API falhar
-        setSpecs({
-          bios_name: 'MEGABIOS(FALLBACK) 2026',
-          vendor: 'DogNew Informática, MEI [F]',
-          cpu: 'Intel(R) Xeon(R) Gold 5318Y CPU [F] @ 2.10GHz',
-          speed: '2100MHz (FAKE)',
-          ram: '28.74 GB (DDR4-3000 VIRTUAL)',
-          storage: 'NVME: Samsung 980 Pro 1TB [F]',
-          motherboard: 'HUANANZHI X99-TF Gaming Motherboard (FALLBACK MODE)'
-        });
-      });
-  }, []);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onEnterSetup]);
 
   if (!specs) return <div className="p-10">Detecting Hardware...</div>;
 
