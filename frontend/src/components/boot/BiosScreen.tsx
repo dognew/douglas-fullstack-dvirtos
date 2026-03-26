@@ -98,7 +98,7 @@ export default function BiosScreen({ onComplete }: { onComplete: () => void }) {
         </div>
 
         <div className="mt-10 space-y-4 uppercase text-sm text-center md:text-left">
-          <p>{specs.bios_name} 2026 {specs.vendor}</p>
+          <p>{specs.bios_name} {specs.vendor}</p>
           <p className="pt-2">{specs.motherboard}</p>
           <p>CPU: {specs.cpu}<br />Speed: {specs.speed}</p>
           <p>Total Memory: {specs.ram}</p>
