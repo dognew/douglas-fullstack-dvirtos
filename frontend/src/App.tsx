@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { useHardware } from './hooks/useHardware';
 import BiosScreen from './components/boot/BiosScreen';
 import BiosSetup from './components/bios/BiosSetup';
+import BootMenu from './components/boot/BootMenu';
+import BootError from './components/boot/BootError';
 
-type BootStage = 'BIOS' | 'SETUP' | 'GRUB' | 'DESKTOP';
+type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'DESKTOP';
 
 export default function App() {
   const [stage, setStage] = useState<BootStage>('BIOS');
@@ -28,7 +30,8 @@ export default function App() {
         <BiosScreen
           specs={specs}
           onComplete={() => setStage('GRUB')} 
-          onEnterSetup={() => setStage('SETUP')} 
+          onEnterSetup={() => setStage('SETUP')}
+          onEnterBootMenu={() => setStage('BOOT_MENU')}
         />
       )}
 
@@ -38,7 +41,20 @@ export default function App() {
           onExit={reboot} 
         />
       )}
-      
+
+      {stage === 'BOOT_MENU' && (
+        <BootMenu
+          specs={specs}
+          onBootSuccess={() => setStage('GRUB')}
+          onBootError={() => setStage('BOOT_ERROR')}
+          onExit={reboot}
+        />
+      )}
+
+      {stage === 'BOOT_ERROR' && (
+        <BootError onReboot={reboot} />
+      )}
+
       {stage === 'GRUB' && (
         <div className="p-10 animate-crt-flicker">
           <p className="text-blue-400">GNU GRUB version 2.06</p>

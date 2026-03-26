@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 
-export default function BiosScreen({ onComplete, onEnterSetup, specs }: {
+export default function BiosScreen({ onComplete, onEnterSetup, onEnterBootMenu, specs }: {
   onComplete: () => void,
   onEnterSetup: () => void,
+  onEnterBootMenu: () => void,
   specs: any
 }) {
 
@@ -13,14 +14,19 @@ export default function BiosScreen({ onComplete, onEnterSetup, specs }: {
           onEnterSetup();
         }
       }
+      if (e.key === 'F12') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        onEnterBootMenu();
+      }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown, true);
     };
-  }, [onEnterSetup]);
+  }, [onEnterSetup, onEnterBootMenu]);
 
   if (!specs) return <div className="p-10">Detecting Hardware...</div>;
 
