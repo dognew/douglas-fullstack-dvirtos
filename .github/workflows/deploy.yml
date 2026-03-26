@@ -28,7 +28,7 @@ jobs:
       - name: 🚀 Deploy via Rsync (SSH)
         uses: Burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr --delete
+          switches: -avzr
           path: ./
           remote_path: ${{ secrets.SSH_REMOTE_PATH }}
           remote_host: ${{ secrets.SSH_HOST }}
