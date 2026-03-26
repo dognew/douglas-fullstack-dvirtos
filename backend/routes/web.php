@@ -13,4 +13,4 @@ Route::get('/', function () {
 });
 
 // Rota para fornecer os dados de hardware ao React
-Route::get('/boot-specs', [BootController::class, 'getSpecs']);
+Route::get('/api/boot-specs', [BootController::class, 'getSpecs']);
