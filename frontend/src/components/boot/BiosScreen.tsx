@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import BootTimer from '../shared/BootTimer';
 
 export default function BiosScreen({ onComplete, onEnterSetup, onEnterBootMenu, specs }: {
   onComplete: () => void,
@@ -86,7 +87,7 @@ export default function BiosScreen({ onComplete, onEnterSetup, onEnterBootMenu, 
 
           <div className="relative group col-span-12 md:col-span-6 lg:col-span-7 xl:col-span-8 2xl:col-span-9">
             <div className="absolute inset-0 pointer-events-none bg-scanlines mix-blend-multiply opacity-60 z-10 animate-crt-flicker"></div>
-            
+
             <div className="break-words pt-2 text-center md:text-left relative z-0">
               <h1 className="text-4xl tracking-tighter text-blue-800 font-eightbit font-bold lg:text-6xl xl:text-7xl 2xl:text-8xl">
                 DOUGLAS FIEDLER
@@ -109,16 +110,17 @@ export default function BiosScreen({ onComplete, onEnterSetup, onEnterBootMenu, 
           </div>
         </div>
 
-        <div className="mt-auto pt-10 text-gray-500 animate-pulse text-center md:text-left">
-          Press DEL to run setup | Press F12 for Boot Menu
-        </div>
+        <div className="absolute bottom-10 w-full flex flex-col items-center gap-4">
+          <div className="text-gray-500 animate-pulse text-center">
+            Press DEL to run setup | Press F12 for Boot Menu
+          </div>
 
-        <div className="mt-10 flex justify-center">
-          {/* Botão para simular a conclusão do processo e destruição da tela */}
-          <p>&nbsp;</p>
-          <button onClick={onComplete} className="mt-4 self-start text-[10px] text-gray-500 hover:text-white transition-colors">
-            [ SIMULATE SYSTEM BOOT ]
-          </button>
+          <BootTimer
+            seconds={10}
+            onComplete={onComplete}
+            animationClass="animate-pulse"
+            message="System will boot in"
+          />
         </div>
       </div>
     </div>
