@@ -77,12 +77,12 @@ export default function PlymouthScreen({ onComplete, selectedOS }: { onComplete:
 
         if (next >= 100) {
           clearInterval(interval);
-          setTimeout(onComplete, 1500);
+          setTimeout(onComplete, 500);
           return 100;
         }
         return next;
       });
-    }, 400); 
+    }, 150); 
 
     return () => clearInterval(interval);
   }, [onComplete, bootSteps]);
