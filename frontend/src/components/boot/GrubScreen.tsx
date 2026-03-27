@@ -16,6 +16,7 @@ export default function GrubScreen({ onSelect }: GrubScreenProps) {
     { id: 'mint', name: "Linux Mint 22.3 (Zena)" },
     { id: 'biglinux', name: "Big Linux (Manjaro Based)" },
     { id: 'windows', name: "Windows 11 Professional" },
+    { id: 'mac', name: "macOS Tahoe 26.4" },
     { id: 'uefi', name: "System Settings (UEFI)" }
   ];
 

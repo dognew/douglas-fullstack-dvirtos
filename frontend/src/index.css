@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -154,4 +156,33 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Custom OS Icons Bridge */
+.bi-debian, .bi-linuxmint, .bi-biglinux {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+}
+
+.bi-debian {
+  mask-image: url('/icons/os/debian.svg');
+  -webkit-mask-image: url('/icons/os/debian.svg');
+}
+
+.bi-linuxmint {
+  mask-image: url('/icons/os/linuxmint.svg');
+  -webkit-mask-image: url('/icons/os/linuxmint.svg');
+}
+
+.bi-biglinux {
+  mask-image: url('/icons/os/biglinux.svg');
+  -webkit-mask-image: url('/icons/os/biglinux.svg');
 }

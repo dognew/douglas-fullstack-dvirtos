@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useHardware } from './hooks/useHardware';
 import BiosScreen from './components/boot/BiosScreen';
 import BiosSetup from './components/bios/BiosSetup';
@@ -6,8 +7,9 @@ import BootMenu from './components/boot/BootMenu';
 import BootError from './components/boot/BootError';
 import GrubScreen from './components/boot/GrubScreen';
 import PlymouthScreen from './components/boot/PlymouthScreen';
+import LoginScreen from './components/boot/LoginScreen';
 
-type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'DESKTOP';
+type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'LOGIN' | 'DESKTOP';
 
 export default function App() {
   const [stage, setStage] = useState<BootStage>('BIOS');
@@ -66,7 +68,17 @@ export default function App() {
       )}
 
       {stage === 'PLYMOUTH' && (
-        <PlymouthScreen onComplete={() => setStage('DESKTOP')} />
+        <PlymouthScreen
+          selectedOS={selectedOS}
+          onComplete={() => setStage('LOGIN')} 
+        />
+      )}
+
+      {stage === 'LOGIN' && (
+        <LoginScreen 
+          onComplete={() => setStage('DESKTOP')} 
+          onReboot={reboot} 
+        />
       )}
 
       {stage === 'DESKTOP' && (
@@ -78,7 +90,7 @@ export default function App() {
           <div className="z-10 text-center space-y-6">
             <div className="space-y-2">
               <h1 className="text-7xl font-bold text-[#FCF87C] drop-shadow-[0_0_20px_rgba(228,200,68,0.3)] tracking-tighter">
-                {selectedOS === 'windows' ? 'Windows 11' : 'D-VirtOS'}
+                D-VirtOS
               </h1>
               <div className="h-1 w-32 bg-gradient-to-r from-transparent via-[#E4C844] to-transparent mx-auto" />
             </div>
@@ -88,7 +100,7 @@ export default function App() {
                 ? 'Environment Authenticated'
                 : `System Loaded: ${selectedOS}`}
             </p>
-
+            
             <button
               onClick={reboot}
               className="mt-12 px-6 py-2 border border-[#B87C00]/40 text-[#B87C00] hover:bg-[#B87C00] hover:text-black transition-all duration-500 text-xs tracking-widest uppercase rounded-full"
@@ -96,6 +108,7 @@ export default function App() {
               Logout / Reboot
             </button>
           </div>
+
         </div>
       )}
     </div>
