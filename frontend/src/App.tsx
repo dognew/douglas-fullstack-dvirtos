@@ -7,8 +7,9 @@ import BootMenu from './components/boot/BootMenu';
 import BootError from './components/boot/BootError';
 import GrubScreen from './components/boot/GrubScreen';
 import PlymouthScreen from './components/boot/PlymouthScreen';
+import LoginScreen from './components/boot/LoginScreen';
 
-type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'DESKTOP';
+type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'LOGIN' | 'DESKTOP';
 
 export default function App() {
   const [stage, setStage] = useState<BootStage>('BIOS');
@@ -69,7 +70,14 @@ export default function App() {
       {stage === 'PLYMOUTH' && (
         <PlymouthScreen
           selectedOS={selectedOS}
+          onComplete={() => setStage('LOGIN')} 
+        />
+      )}
+
+      {stage === 'LOGIN' && (
+        <LoginScreen 
           onComplete={() => setStage('DESKTOP')} 
+          onReboot={reboot} 
         />
       )}
 
