@@ -40,9 +40,13 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
         {/* Animated Gold Ring */}
         <div className="w-32 h-32 border-2 border-[#B87C00]/20 border-t-[#FCF87C] rounded-full animate-spin shadow-[0_0_20px_rgba(208,152,12,0.2)]"></div>
         
-        {/* Placeholder for your Gold Dog Logo */}
+        {/* Logo do Cachorro Gold & White */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[#E4C844] font-bold text-4xl drop-shadow-[0_0_10px_rgba(228,200,68,0.5)]">D</span>
+          <img 
+            src="/logo-dognew-white-gold.svg" 
+            alt="D-VirtOS Logo" 
+            className="w-20 h-20 object-contain drop-shadow-[0_0_15px_rgba(228,200,68,0.4)]"
+          />
         </div>
       </div>
 
