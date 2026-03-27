@@ -67,7 +67,10 @@ export default function App() {
       )}
 
       {stage === 'PLYMOUTH' && (
-        <PlymouthScreen onComplete={() => setStage('DESKTOP')} />
+        <PlymouthScreen
+          selectedOS={selectedOS}
+          onComplete={() => setStage('DESKTOP')} 
+        />
       )}
 
       {stage === 'DESKTOP' && (

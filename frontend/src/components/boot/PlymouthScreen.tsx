@@ -5,7 +5,7 @@ import { useEffect, useState, useMemo } from 'react';
  * Cinematic boot sequence with OS and Browser detection.
  * Refined for a premium, sophisticated aesthetic with balanced spacing.
  */
-export default function PlymouthScreen({ onComplete }: { onComplete: () => void }) {
+export default function PlymouthScreen({ onComplete, selectedOS }: { onComplete: () => void, selectedOS: string }) {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('Initializing kernel...');
   const [activeStep, setActiveStep] = useState(0);
@@ -14,25 +14,45 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
   const envDetails = useMemo(() => {
     const ua = window.navigator.userAgent.toLowerCase();
     
-    // OS Detection
-    let os = 'tux';
-    if (ua.includes('win')) os = 'windows';
-    else if (ua.includes('mac')) os = 'apple';
-    else if (ua.includes('android')) os = 'android2';
+    // Mapping of GRUB IDs to Bootstrap/Custom Icons and Display Names
+    const osConfigs: Record<string, { icon: string; name: string }> = {
+      'windows': { icon: 'windows', name: 'Windows 11' },
+      'mac': { icon: 'apple', name: 'macOS Tahoe' },
+      'debian': { icon: 'debian', name: 'Debian 13' },
+      'mint': { icon: 'linuxmint', name: 'Linux Mint' },
+      'biglinux': { icon: 'biglinux', name: 'Big Linux' },
+      'uefi': { icon: 'gear-wide-connected', name: 'UEFI System' },
+      'dvirtos': { icon: 'cpu', name: 'D-VirtOS' }
+    };
+
+    let osIcon = 'tux';
+    let osName = 'Linux Kernel';
+
+    // Logic: If user selected a specific OS in GRUB (other than the main D-VirtOS), 
+    // we use that info. Otherwise, we perform hardware detection.
+    if (selectedOS && selectedOS !== 'dvirtos') {
+      osIcon = osConfigs[selectedOS]?.icon || 'tux';
+      osName = osConfigs[selectedOS]?.name || 'Linux Kernel';
+    } else {
+      // Auto-detection fallback for D-VirtOS / Default
+      if (ua.includes('win')) { osIcon = 'windows'; osName = 'Windows Subsystem'; }
+      else if (ua.includes('mac')) { osIcon = 'apple'; osName = 'Darwin Kernel'; }
+      else if (ua.includes('android')) { osIcon = 'android2'; osName = 'Android Kernel'; }
+    }
 
     // Browser Detection
-    let browser = 'globe'; // Fallback
+    let browser = 'globe'; 
     if (ua.includes('edg')) browser = 'browser-edge';
     else if (ua.includes('chrome') && !ua.includes('edg')) browser = 'browser-chrome';
     else if (ua.includes('firefox')) browser = 'browser-firefox';
     else if (ua.includes('safari') && !ua.includes('chrome')) browser = 'browser-safari';
 
     // Store for global use
-    sessionStorage.setItem('detected_os', os);
+    sessionStorage.setItem('detected_os', osIcon);
     sessionStorage.setItem('detected_browser', browser);
 
-    return { os, browser };
-  }, []);
+    return { osIcon, osName, browser };
+  }, [selectedOS]);
 
   // 2. Boot Sequence Mapping
   const bootSteps = useMemo(() => [
@@ -41,7 +61,7 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
     { msg: 'Mounting root filesystem...', icon: 'database' },
     { msg: 'Starting systemd services...', icon: 'gear-wide-connected' },
     { msg: 'Web Browser identified...', icon: envDetails.browser },
-    { msg: 'Operation System detected...', icon: envDetails.os },
+    { msg: `${envDetails.osName} detected...`, icon: envDetails.osIcon },
     { msg: 'Initializing graphics driver...', icon: 'gpu-card' },
     { msg: 'Starting Desktop Manager...', icon: 'display' }
   ], [envDetails]);
@@ -79,7 +99,7 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
     return (
       <i 
         key={`${index}-${position}`}
-        className={`bi bi-${bootSteps[index].icon} text-3xl md:text-5xl transition-all duration-1000 ease-in-out ${styles[position]}`} 
+        className={`bi bi-${bootSteps[index].icon} text-3xl md:text-5xl flex items-center justify-center transition-all duration-1000 ease-in-out ${styles[position]}`} 
       />
     );
   };
@@ -87,7 +107,7 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
   return (
     <div className="h-screen w-full bg-black flex flex-col items-center justify-center select-none font-sans overflow-hidden p-6">
       
-      {/* 1. Master Logo & Spinner - Compacted sizing */}
+      {/* 1. Master Logo & Spinner */}
       <div className="mb-8 md:mb-16 relative">
         <div className="w-28 h-28 md:w-36 md:h-36 border-2 border-[#B87C00]/20 border-t-[#FCF87C] rounded-full animate-spin shadow-[0_0_30px_rgba(184,124,0,0.1)]" />
         <div className="absolute inset-0 flex items-center justify-center">
@@ -99,14 +119,14 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
         </div>
       </div>
 
-      {/* 2. OS/Browser Icon Carousel - Refined spacing */}
-      <div className="h-20 md:h-28 flex items-center justify-center gap-8 md:gap-16 mb-8 md:mb-12 relative">
+      {/* 2. OS/Browser Icon Carousel */}
+      <div className="h-20 md:h-28 flex items-center justify-center gap-8 md:gap-16 mb-8 md:mb-12 relative text-[#FCF87C]">
         {renderIcon(activeStep - 1, 'left')}
         {renderIcon(activeStep, 'center')}
         {renderIcon(activeStep + 1, 'right')}
       </div>
 
-      {/* 3. Progress Track & Status - Subtle and sophisticated text scale */}
+      {/* 3. Progress Track & Status */}
       <div className="w-full max-w-md space-y-4 md:space-y-8 text-center">
         <div className="h-1 md:h-1.5 w-full bg-[#B87C00]/10 rounded-full overflow-hidden border border-white/5 shadow-inner">
           <div 
@@ -116,7 +136,6 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
         </div>
 
         <div className="space-y-2 md:space-y-4">
-          {/* Status Message: Reduced size and tracking for a premium look */}
           <p className="text-[#FCF87C]/90 font-mono text-[11px] md:text-sm uppercase tracking-[0.2em] md:tracking-[0.4em] min-h-[1.2rem] animate-pulse">
             {status}
           </p>
@@ -132,7 +151,7 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
         </div>
       </div>
 
-      {/* 4. Footer Branding - Clean and minimalist */}
+      {/* 4. Footer Branding */}
       <div className="absolute bottom-6 md:bottom-10 flex flex-col items-center gap-2 md:gap-3 w-full">
         <div className="h-[1px] w-10 md:w-16 bg-gradient-to-r from-transparent via-[#D0980C]/20 to-transparent" />
         <span className="text-[9px] md:text-xs text-white/20 font-mono tracking-[0.3em] md:tracking-[0.5em] uppercase text-center leading-relaxed">
