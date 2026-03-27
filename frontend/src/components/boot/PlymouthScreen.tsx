@@ -2,25 +2,35 @@ import { useEffect, useState, useMemo } from 'react';
 
 /**
  * PlymouthScreen Component
- * Cinematic boot sequence with OS detection and smooth icon carousel.
+ * Cinematic boot sequence with OS and Browser detection.
  */
 export default function PlymouthScreen({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('Initializing kernel...');
   const [activeStep, setActiveStep] = useState(0);
 
-  // 1. Hardware-based OS Detection
-  // Matches the user's platform with specific Bootstrap Icons
-  const userOS = useMemo(() => {
-    const platform = window.navigator.userAgent.toLowerCase();
-    let os = 'tux'; // Default Linux icon
+  // 1. Environment Detection (OS & Browser)
+  const envDetails = useMemo(() => {
+    const ua = window.navigator.userAgent.toLowerCase();
     
-    if (platform.includes('win')) os = 'windows';
-    else if (platform.includes('mac')) os = 'apple';
-    else if (platform.includes('android')) os = 'android2';
-    
+    // OS Detection
+    let os = 'tux';
+    if (ua.includes('win')) os = 'windows';
+    else if (ua.includes('mac')) os = 'apple';
+    else if (ua.includes('android')) os = 'android2';
+
+    // Browser Detection
+    let browser = 'globe'; // Fallback
+    if (ua.includes('edg')) browser = 'browser-edge';
+    else if (ua.includes('chrome') && !ua.includes('edg')) browser = 'browser-chrome';
+    else if (ua.includes('firefox')) browser = 'browser-firefox';
+    else if (ua.includes('safari') && !ua.includes('chrome')) browser = 'browser-safari';
+
+    // Store for global use
     sessionStorage.setItem('detected_os', os);
-    return os;
+    sessionStorage.setItem('detected_browser', browser);
+
+    return { os, browser };
   }, []);
 
   // 2. Boot Sequence Mapping
@@ -29,15 +39,16 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
     { msg: 'Detecting hardware modules...', icon: 'wrench-adjustable' },
     { msg: 'Mounting root filesystem...', icon: 'database' },
     { msg: 'Starting systemd services...', icon: 'gear-wide-connected' },
-    { msg: 'Operation System detected...', icon: userOS }, // Dynamic OS icon
+    { msg: 'Web Browser identified...', icon: envDetails.browser }, // New step
+    { msg: 'Operation System detected...', icon: envDetails.os },
     { msg: 'Initializing graphics driver...', icon: 'gpu-card' },
     { msg: 'Starting Desktop Manager...', icon: 'display' }
-  ], [userOS]);
+  ], [envDetails]);
 
   useEffect(() => {
-    // Cinematic speed: 400ms interval for a professional boot feel
     const interval = setInterval(() => {
       setProgress(prev => {
+        // Adjusted increment to account for the extra step
         const next = prev + (100 / (bootSteps.length * 10)); 
         const stepIndex = Math.min(Math.floor((next / 100) * bootSteps.length), bootSteps.length - 1);
         
@@ -46,7 +57,7 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
 
         if (next >= 100) {
           clearInterval(interval);
-          setTimeout(onComplete, 1500); // Elegant exit delay
+          setTimeout(onComplete, 1500);
           return 100;
         }
         return next;
@@ -56,10 +67,6 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
     return () => clearInterval(interval);
   }, [onComplete, bootSteps]);
 
-  /**
-   * Helper to render carousel icons
-   * Handles smooth transitions for movement, scale, and the gold palette
-   */
   const renderIcon = (index: number, position: 'left' | 'center' | 'right') => {
     if (index < 0 || index >= bootSteps.length) return <div className="w-12" />;
 
@@ -71,6 +78,7 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
 
     return (
       <i 
+        key={`${index}-${position}`}
         className={`bi bi-${bootSteps[index].icon} text-5xl transition-all duration-1000 ease-in-out ${styles[position]}`} 
       />
     );
@@ -91,7 +99,7 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
         </div>
       </div>
 
-      {/* 2. OS Icon Carousel */}
+      {/* 2. OS/Hardware Icon Carousel */}
       <div className="h-28 flex items-center justify-center gap-16 mb-12 relative">
         {renderIcon(activeStep - 1, 'left')}
         {renderIcon(activeStep, 'center')}
@@ -125,8 +133,8 @@ export default function PlymouthScreen({ onComplete }: { onComplete: () => void 
       {/* 4. Minimalist Footer Branding */}
       <div className="absolute bottom-10 flex flex-col items-center gap-3">
         <div className="h-[1px] w-16 bg-gradient-to-r from-transparent via-[#D0980C]/30 to-transparent" />
-        <span className="text-[10px] text-white/20 font-mono tracking-[0.5em] uppercase">
-          D-VIRTOS <span className="text-[#D0980C]/40">System Architecture</span>
+        <span className="text-[10px] text-white/20 font-mono tracking-[0.5em] uppercase text-center">
+          D-VIRTOS <br /> <span className="text-[#D0980C]/40">Environment Discovery</span>
         </span>
       </div>
     </div>
