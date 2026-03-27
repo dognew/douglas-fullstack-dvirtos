@@ -82,7 +82,7 @@ export default function App() {
           <div className="z-10 text-center space-y-6">
             <div className="space-y-2">
               <h1 className="text-7xl font-bold text-[#FCF87C] drop-shadow-[0_0_20px_rgba(228,200,68,0.3)] tracking-tighter">
-                {selectedOS === 'windows' ? 'Windows 11' : 'D-VirtOS'}
+                D-VirtOS
               </h1>
               <div className="h-1 w-32 bg-gradient-to-r from-transparent via-[#E4C844] to-transparent mx-auto" />
             </div>
@@ -100,6 +100,7 @@ export default function App() {
               Logout / Reboot
             </button>
           </div>
+
         </div>
       )}
     </div>
