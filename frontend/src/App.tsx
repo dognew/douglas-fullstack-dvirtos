@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useHardware } from './hooks/useHardware';
 import BiosScreen from './components/boot/BiosScreen';
 import BiosSetup from './components/bios/BiosSetup';
@@ -88,7 +89,7 @@ export default function App() {
                 ? 'Environment Authenticated'
                 : `System Loaded: ${selectedOS}`}
             </p>
-
+            
             <button
               onClick={reboot}
               className="mt-12 px-6 py-2 border border-[#B87C00]/40 text-[#B87C00] hover:bg-[#B87C00] hover:text-black transition-all duration-500 text-xs tracking-widest uppercase rounded-full"
