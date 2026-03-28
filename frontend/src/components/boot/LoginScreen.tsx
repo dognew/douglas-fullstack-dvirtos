@@ -48,7 +48,7 @@ export default function LoginScreen({ onComplete, onReboot }: {
             alt="D-VirtOS"
             className="w-16 h-16 md:w-20 md:h-20 mb-4 drop-shadow-lg"
           />
-          <h1 className="text-3xl md:text-4xl font-medium text-[#FCF87C] mb-3 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-medium text-[#FCF87C] mb-3 tracking-tight whitespace-nowrap">
             Bem-vindo ao D-VirtOS
           </h1>
           <p className="text-white/80 text-sm md:text-base max-w-md font-light">
