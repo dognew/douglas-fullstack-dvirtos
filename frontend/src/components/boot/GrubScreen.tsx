@@ -9,7 +9,7 @@ interface GrubScreenProps {
 export default function GrubScreen({ onSelect }: GrubScreenProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showTimer, setShowTimer] = useState(true);
-  
+
   const menuItems = [
     { id: 'dvirtos', name: "D-VirtOS (First Edition LTS)" },
     { id: 'debian', name: "Debian GNU/Linux 13 (Trixie)" },
@@ -48,32 +48,31 @@ export default function GrubScreen({ onSelect }: GrubScreenProps) {
         <h1 className="text-[#E4C844] font-bold text-xl mb-6 tracking-tight uppercase">
           DOG GRUB <span className="text-[#FFFFFF]/50 font-light">version 2.06</span>
         </h1>
-        
+
         <div className="space-y-1 mb-8">
           {menuItems.map((item, index) => (
             <div
               key={item.id}
               onClick={() => onSelect(item.id)}
-              className={`px-4 py-2 cursor-pointer transition-all duration-150 rounded ${
-                index === selectedIndex 
-                  ? 'bg-[#B87C00]/30 border-l-4 border-[#FCF87C] text-[#FCF87C] translate-x-1 shadow-[inset_0_0_15px_rgba(228,200,68,0.1)]' 
+              className={`px-4 py-2 cursor-pointer transition-all duration-150 rounded ${index === selectedIndex
+                  ? 'bg-[#B87C00]/30 border-l-4 border-[#FCF87C] text-[#FCF87C] translate-x-1 shadow-[inset_0_0_15px_rgba(228,200,68,0.1)]'
                   : 'hover:bg-white/5 border-l-4 border-transparent text-white/70'
-              }`}
+                }`}
             >
               {item.name}
             </div>
           ))}
         </div>
 
-        <div className="text-sm text-white/40 border-t border-white/10 pt-4 flex justify-between items-center font-mono">
+        <div className="text-[10px] sm:text-sm text-white/40 border-t border-white/10 pt-4 flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2 sm:gap-0 font-mono text-center sm:text-left">
           <p>Use ↑/↓ to navigate. ENTER to boot.</p>
-          
+
           {showTimer && (
             <div className="text-[#E4C844]">
-              <BootTimer 
-                seconds={5} 
-                onComplete={() => onSelect(menuItems[0].id)} 
-                message="Auto-boot in" 
+              <BootTimer
+                seconds={5}
+                onComplete={() => onSelect(menuItems[0].id)}
+                message="Auto-boot in"
               />
             </div>
           )}
