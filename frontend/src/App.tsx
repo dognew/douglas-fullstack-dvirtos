@@ -87,13 +87,13 @@ export default function App() {
       )}
 
       {stage === 'DESKTOP' && (
-        <div className="h-screen w-full flex flex-col items-center justify-center bg-[#000000] relative overflow-hidden">
+        <div className="h-screen w-full flex flex-col items-center justify-center bg-[#000000] relative overflow-hidden font-ubuntu">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#B87C00]/10 blur-[120px] rounded-full" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#D0980C]/50 blur-[120px] rounded-full" />
 
           <div className="z-10 text-center space-y-6">
             <div className="space-y-2">
-              <h1 className="text-7xl font-bold text-[#FCF87C] drop-shadow-[0_0_20px_rgba(228,200,68,0.3)] tracking-tighter uppercase">
+              <h1 className="text-7xl font-bold text-[#FCF87C] drop-shadow-[0_0_20px_rgba(228,200,68,0.3)] tracking-tighter">
                 D-VirtOS
               </h1>
               <div className="h-1 w-32 bg-gradient-to-r from-transparent via-[#E4C844] to-transparent mx-auto" />
