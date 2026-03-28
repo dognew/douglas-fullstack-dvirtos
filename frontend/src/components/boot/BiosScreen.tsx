@@ -31,7 +31,8 @@ export default function BiosScreen({ onComplete, onEnterSetup, onEnterBootMenu, 
 
   if (!specs) return <div className="p-10">Detecting Hardware...</div>;
 
-  const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  const isMobileDevice = typeof window !== 'undefined' && 
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   return (
     <div className="relative w-full min-h-screen bg-black overflow-hidden flex flex-col">
@@ -114,7 +115,7 @@ export default function BiosScreen({ onComplete, onEnterSetup, onEnterBootMenu, 
 
         <div className="mt-16 md:mt-0 md:absolute md:bottom-10 left-0 w-full flex flex-col items-center gap-8 md:gap-4 px-4 pb-12 md:pb-0">
           <div className="text-gray-500 animate-pulse text-center text-[11px] sm:text-base tracking-wide uppercase">
-            {isTouchDevice 
+            {isMobileDevice 
               ? "ACESSE PELO PC PARA TER ACESSO A BIOS" 
               : "Press DEL to run setup | Press F12 for Boot Menu"}
           </div>
