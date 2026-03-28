@@ -23,6 +23,11 @@ export default function App() {
     window.location.reload();
   };
 
+  const logoff = () => {
+    sessionStorage.removeItem('selected_visitor_type');
+    setStage('LOGIN');
+  };
+
   // Show black screen while loading hardware specs
   if (loading) {
     return <div className="bg-black min-h-screen" />;
@@ -83,13 +88,12 @@ export default function App() {
 
       {stage === 'DESKTOP' && (
         <div className="h-screen w-full flex flex-col items-center justify-center bg-[#000000] relative overflow-hidden">
-          {/* Efeito de luz de fundo sutil para não ficar um preto "morto" */}
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#B87C00]/10 blur-[120px] rounded-full" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#D0980C]/50 blur-[120px] rounded-full" />
 
           <div className="z-10 text-center space-y-6">
             <div className="space-y-2">
-              <h1 className="text-7xl font-bold text-[#FCF87C] drop-shadow-[0_0_20px_rgba(228,200,68,0.3)] tracking-tighter">
+              <h1 className="text-7xl font-bold text-[#FCF87C] drop-shadow-[0_0_20px_rgba(228,200,68,0.3)] tracking-tighter uppercase">
                 D-VirtOS
               </h1>
               <div className="h-1 w-32 bg-gradient-to-r from-transparent via-[#E4C844] to-transparent mx-auto" />
@@ -101,14 +105,22 @@ export default function App() {
                 : `System Loaded: ${selectedOS}`}
             </p>
             
-            <button
-              onClick={reboot}
-              className="mt-12 px-6 py-2 border border-[#B87C00]/40 text-[#B87C00] hover:bg-[#B87C00] hover:text-black transition-all duration-500 text-xs tracking-widest uppercase rounded-full"
-            >
-              Logout / Reboot
-            </button>
-          </div>
+            <div className="flex gap-4 justify-center mt-12 bg-transparent">
+              <button
+                onClick={logoff}
+                className="px-6 py-2 border border-[#B87C00]/40 text-[#B87C00] hover:bg-[#FCF87C] hover:text-black focus:outline-0 focus:ring-0 outline-none transition-all duration-500 text-xs tracking-widest uppercase rounded-full flex items-center gap-2"
+              >
+                <i className="bi bi-box-arrow-right"></i> Logoff
+              </button>
 
+              <button
+                onClick={reboot}
+                className="px-6 py-2 border border-red-900/40 text-red-500/70 hover:bg-red-700 hover:text-white focus:outline-0 focus:ring-0 outline-none transition-all duration-500 text-xs tracking-widest uppercase rounded-full flex items-center gap-2"
+              >
+                <i className="bi bi-arrow-clockwise"></i> Reboot
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
