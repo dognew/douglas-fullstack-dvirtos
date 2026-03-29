@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { useHardware } from '../hooks/useHardware';
 
-// Full compatibility with your existing stages
 export type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'LOGIN' | 'DESKTOP';
 
 interface SessionState {
@@ -13,6 +12,11 @@ interface SessionState {
     specs: any;
     loading: boolean;
   };
+  /* Added auth object to state definition */
+  auth: {
+    isAuthenticated: boolean;
+    visitorType: string | null;
+  };
   storage: {
     session: Record<string, string | null>;
   };
@@ -22,6 +26,8 @@ interface SessionContextType {
   state: SessionState;
   setStage: (stage: BootStage) => void;
   setSelectedOS: (os: string) => void;
+  /* Updated setAuth signature to handle login events */
+  setAuth: (visitorType: string) => void;
   reboot: () => void;
   logoff: () => void;
 }
@@ -32,9 +38,11 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const { specs, loading } = useHardware();
   const [stage, setStageState] = useState<BootStage>('BIOS');
   const [selectedOS, setSelectedOSState] = useState<string>('dvirtos');
+  /* New internal states for auth persistence */
+  const [visitorType, setVisitorType] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [sessionRaw, setSessionRaw] = useState<Record<string, string | null>>({});
 
-  // Sync session storage for the inspector
   useEffect(() => {
     const updateStorageDump = () => {
       const dump: Record<string, string | null> = {};
@@ -43,6 +51,13 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
         if (key) dump[key] = sessionStorage.getItem(key);
       }
       setSessionRaw(dump);
+      
+      /* Sync local auth state with storage if needed */
+      const savedType = sessionStorage.getItem('selected_visitor_type');
+      if (savedType) {
+        setVisitorType(savedType);
+        setIsAuthenticated(true);
+      }
     };
 
     updateStorageDump();
@@ -57,17 +72,27 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
   const logoff = () => {
     sessionStorage.removeItem('selected_visitor_type');
+    setVisitorType(null);
+    setIsAuthenticated(false);
     setStageState('LOGIN');
+  };
+
+  const setAuth = (type: string) => {
+    setVisitorType(type);
+    setIsAuthenticated(true);
   };
 
   const value: SessionContextType = {
     state: {
       boot: { stage, selectedOS },
       hardware: { specs, loading },
+      /* Exposing auth object to the system */
+      auth: { isAuthenticated, visitorType },
       storage: { session: sessionRaw }
     },
     setStage: setStageState,
     setSelectedOS: setSelectedOSState,
+    setAuth,
     reboot,
     logoff
   };
