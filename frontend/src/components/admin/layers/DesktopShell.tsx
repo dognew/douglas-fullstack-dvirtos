@@ -7,13 +7,16 @@ import { NetworkApplet } from './shell/applets/NetworkApplet';
 import { VolumeApplet } from './shell/applets/VolumeApplet';
 import { BatteryApplet } from './shell/applets/BatteryApplet';
 
+/* UI Imports */
+import { DesktopIcon, type DesktopIconConfig } from './shell/DesktopIcon';
+
 interface DesktopShellProps {
   children?: ReactNode;
 }
 
 /**
- * Layer 4: Desktop Shell (KDE-style Taskbar implementation)
- * Responsibility: Renders the wallpaper, dynamic taskbar, and modular system tray.
+ * Layer 4: Desktop Shell
+ * Responsibility: Renders wallpaper, taskbar, system tray, and desktop workspace icons.
  */
 export const DesktopShell = ({ children }: DesktopShellProps) => {
   const { state, logoff, reboot } = useSession();
@@ -28,10 +31,31 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
     return () => window.removeEventListener('dvirtos:window_list_update', syncWindows);
   }, []);
 
+  const spawnApp = (type: string) => {
+    const event = new CustomEvent('dvirtos:spawn_app', { detail: { type } });
+    window.dispatchEvent(event);
+  };
+
   const toggleWindow = (id: string) => {
     const event = new CustomEvent('dvirtos:toggle_window', { detail: { id } });
     window.dispatchEvent(event);
   };
+
+  /* Desktop Icons Configuration Object */
+  const desktopIcons: DesktopIconConfig[] = [
+    { 
+      id: 'term-launcher', 
+      label: 'Terminal', 
+      icon: 'bi-terminal-fill', 
+      action: () => spawnApp('terminal') 
+    },
+    { 
+      id: 'sys-info', 
+      label: 'System Info', 
+      icon: 'bi-info-square-fill', 
+      action: () => console.log('System Info Triggered') 
+    }
+  ];
 
   return (
     <div className="h-full w-full flex flex-col font-ubuntu relative overflow-hidden bg-[#0A0A0A] cursor-x11-left-ptr">
@@ -48,7 +72,14 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
          </div>
       </div>
 
-      <main className="flex-1 relative z-10">
+      {/* Main Workspace: Desktop Icons Grid & Windows */}
+      <main className="flex-1 relative z-10 p-6 flex flex-col flex-wrap gap-4 content-start">
+        {/* Render Desktop Icons from Object List */}
+        {desktopIcons.map(icon => (
+          <DesktopIcon key={icon.id} config={icon} />
+        ))}
+
+        {/* User Space Windows (Layer 5) */}
         {children}
       </main>
 
