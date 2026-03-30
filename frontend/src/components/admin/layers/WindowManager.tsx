@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode, useEffect } from 'react';
 import { TerminalTest } from './apps/TerminalTest';
 
 /**
@@ -20,10 +20,8 @@ interface WindowManagerProps {
  * Controls window lifecycle using geometric states for multiple instances.
  */
 export const WindowManager = ({ children }: WindowManagerProps) => {
-  /* Tracks all active window processes */
-  const [windows, setWindows] = useState<WindowInstance[]>([
-    { id: 'initial-term', type: 'terminal', isMinimized: false }
-  ]);
+  /* Tracks all active window processes - Starts empty as requested */
+  const [windows, setWindows] = useState<WindowInstance[]>([]);
 
   /**
    * Spawns a new terminal instance with a unique identifier
@@ -32,6 +30,20 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     const newId = `term-${Date.now()}`;
     setWindows(prev => [...prev, { id: newId, type: 'terminal', isMinimized: false }]);
   };
+
+  /**
+   * Listen for system signals to spawn new applications
+   */
+  useEffect(() => {
+    const handleSpawnSignal = (e: Event) => {
+      if ((e as CustomEvent).detail?.type === 'terminal') {
+        spawnTerminal();
+      }
+    };
+
+    window.addEventListener('dvirtos:spawn_app', handleSpawnSignal);
+    return () => window.removeEventListener('dvirtos:spawn_app', handleSpawnSignal);
+  }, []);
 
   /**
    * Removes a specific window instance from the stack (Process Kill)
@@ -53,16 +65,6 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     <div className="window-manager-root w-full h-full relative overflow-hidden pointer-events-auto">
       {children}
       
-      {/* Temporary Spawner: 
-          Will be moved to Layer 4 (Taskbar/Desktop) in the next phase.
-      */}
-      <button 
-        onClick={spawnTerminal}
-        className="absolute top-4 right-4 z-[100] bg-white/10 px-3 py-1 rounded text-[10px] text-white border border-white/20 hover:bg-white/20 transition-colors"
-      >
-        + NEW TERMINAL
-      </button>
-
       {/* Render processes based on the windows state array */}
       {windows.map((win) => (
         <div key={win.id}>

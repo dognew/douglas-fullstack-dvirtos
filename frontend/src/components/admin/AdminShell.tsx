@@ -6,10 +6,18 @@ interface AdminShellProps {
   onClose: () => void;
 }
 
-type AdminView = 'session_manager' | 'hardware' | 'logs';
+type AdminView = 'session_manager' | 'processes' | 'hardware';
 
 export const AdminShell = ({ isOpen, onClose }: AdminShellProps) => {
   const [activeView, setActiveView] = useState<AdminView>('session_manager');
+
+  /**
+   * Emits a system-wide signal to spawn an application in the Window Manager
+   */
+  const emitSpawnSignal = (appType: string) => {
+    const event = new CustomEvent('dvirtos:spawn_app', { detail: { type: appType } });
+    window.dispatchEvent(event);
+  };
 
   if (!isOpen) return null;
 
@@ -38,11 +46,34 @@ export const AdminShell = ({ isOpen, onClose }: AdminShellProps) => {
             >
               <i className="bi bi-database-fill mr-2"></i> session_manager
             </button>
+            <button 
+              onClick={() => setActiveView('processes')}
+              className={`w-full text-left px-3 py-2 text-[10px] font-mono uppercase transition-all ${
+                activeView === 'processes' ? 'bg-[#E4C844] text-black' : 'text-white/40 hover:bg-white/5'
+              }`}
+            >
+              <i className="bi bi-cpu-fill mr-2"></i> process_spawner
+            </button>
           </div>
 
           {/* Main Content Area */}
           <div className="flex-1 p-6 bg-[#121212] overflow-auto">
             {activeView === 'session_manager' && <SessionInspector />}
+            
+            {activeView === 'processes' && (
+              <div className="space-y-4">
+                <h3 className="text-[#E4C844] text-xs font-mono uppercase border-b border-white/5 pb-2">Available Binaries</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    onClick={() => emitSpawnSignal('terminal')}
+                    className="p-4 border border-white/10 bg-white/5 hover:bg-[#E4C844]/10 hover:border-[#E4C844]/50 transition-all text-left group"
+                  >
+                    <div className="text-[#E4C844] mb-1 font-mono text-xs tracking-tighter">/usr/bin/terminal</div>
+                    <div className="text-[10px] text-white/30 uppercase tracking-widest group-hover:text-white/60">Spawn New Instance</div>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
