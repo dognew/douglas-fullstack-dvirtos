@@ -15,6 +15,14 @@
   cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/pointer.svg") 9 2, pointer;
 }
 
+.cursor-x11-size-hor {
+  cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/size_hor.svg") 16 16, ew-resize;
+}
+
+.cursor-x11-size-ver {
+  cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/size_ver.svg") 16 16, ns-resize;
+}
+
 button:hover{
     cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/pointer.svg") 9 2, pointer;
 }

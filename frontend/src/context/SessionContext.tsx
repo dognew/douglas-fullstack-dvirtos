@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react';
 import { useHardware } from '../hooks/useHardware';
 
 export type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'LOGIN' | 'DESKTOP';
@@ -12,13 +12,13 @@ interface SessionState {
     specs: any;
     loading: boolean;
   };
-  /* Added auth object to state definition */
   auth: {
     isAuthenticated: boolean;
     visitorType: string | null;
   };
   storage: {
     session: Record<string, string | null>;
+    skipIntro: boolean; // Persisted intro state
   };
 }
 
@@ -26,8 +26,8 @@ interface SessionContextType {
   state: SessionState;
   setStage: (stage: BootStage) => void;
   setSelectedOS: (os: string) => void;
-  /* Updated setAuth signature to handle login events */
   setAuth: (visitorType: string) => void;
+  setSkipIntro: (value: boolean) => void; // Function to persist preference
   reboot: () => void;
   logoff: () => void;
 }
@@ -38,32 +38,40 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const { specs, loading } = useHardware();
   const [stage, setStageState] = useState<BootStage>('BIOS');
   const [selectedOS, setSelectedOSState] = useState<string>('dvirtos');
-  /* New internal states for auth persistence */
+  
+  /* Internal state management */
   const [visitorType, setVisitorType] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [skipIntro, setSkipIntroState] = useState(false);
   const [sessionRaw, setSessionRaw] = useState<Record<string, string | null>>({});
 
-  useEffect(() => {
-    const updateStorageDump = () => {
-      const dump: Record<string, string | null> = {};
-      for (let i = 0; i < sessionStorage.length; i++) {
-        const key = sessionStorage.key(i);
-        if (key) dump[key] = sessionStorage.getItem(key);
-      }
-      setSessionRaw(dump);
-      
-      /* Sync local auth state with storage if needed */
-      const savedType = sessionStorage.getItem('selected_visitor_type');
-      if (savedType) {
-        setVisitorType(savedType);
-        setIsAuthenticated(true);
-      }
-    };
+  /**
+   * Syncs the virtual system storage with browser's session storage
+   */
+  const updateStorageDump = useCallback(() => {
+    const dump: Record<string, string | null> = {};
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key) dump[key] = sessionStorage.getItem(key);
+    }
+    setSessionRaw(dump);
+    
+    /* Sync auth and preferences */
+    const savedType = sessionStorage.getItem('selected_visitor_type');
+    const savedIntro = sessionStorage.getItem('dvirtos_skip_intro') === 'true';
+    
+    if (savedType) {
+      setVisitorType(savedType);
+      setIsAuthenticated(true);
+    }
+    setSkipIntroState(savedIntro);
+  }, []);
 
+  useEffect(() => {
     updateStorageDump();
     window.addEventListener('storage', updateStorageDump);
     return () => window.removeEventListener('storage', updateStorageDump);
-  }, [stage]);
+  }, [updateStorageDump]);
 
   const reboot = () => {
     setStageState('BIOS');
@@ -78,21 +86,30 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const setAuth = (type: string) => {
+    sessionStorage.setItem('selected_visitor_type', type);
     setVisitorType(type);
     setIsAuthenticated(true);
+  };
+
+  const setSkipIntro = (value: boolean) => {
+    sessionStorage.setItem('dvirtos_skip_intro', String(value));
+    setSkipIntroState(value);
   };
 
   const value: SessionContextType = {
     state: {
       boot: { stage, selectedOS },
       hardware: { specs, loading },
-      /* Exposing auth object to the system */
       auth: { isAuthenticated, visitorType },
-      storage: { session: sessionRaw }
+      storage: { 
+        session: sessionRaw,
+        skipIntro 
+      }
     },
     setStage: setStageState,
     setSelectedOS: setSelectedOSState,
     setAuth,
+    setSkipIntro,
     reboot,
     logoff
   };
