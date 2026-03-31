@@ -6,41 +6,61 @@ interface WindowInstance {
   type: 'terminal';
   isMinimized: boolean;
   title: string;
-  zIndex: number; // Added to track depth
+  zIndex: number; 
 }
 
 interface WindowManagerProps {
   children: ReactNode;
 }
 
+/**
+ * Layer 3: Window Manager
+ * Responsibility: Implements a Stack-based window management system.
+ * Refined: Replaced incremental zIndex with a Stack array logic (Range: 100-800).
+ */
 export const WindowManager = ({ children }: WindowManagerProps) => {
   const [windows, setWindows] = useState<WindowInstance[]>([]);
-  const [nextZIndex, setNextZIndex] = useState(100); // Start above desktop level
+  /* The stack stores window IDs in order of depth (last element = top) */
+  const [windowStack, setWindowStack] = useState<string[]>([]);
 
+  /**
+   * Syncs the window list with their calculated Z-Index based on the stack.
+   */
   useEffect(() => {
-    const event = new CustomEvent('dvirtos:window_list_update', { detail: windows });
+    const updatedWindows = windows.map(win => ({
+      ...win,
+      zIndex: 100 + windowStack.indexOf(win.id)
+    }));
+    const event = new CustomEvent('dvirtos:window_list_update', { detail: updatedWindows });
     window.dispatchEvent(event);
-  }, [windows]);
+  }, [windows, windowStack]);
 
   const bringToFront = (id: string) => {
-    setNextZIndex(prev => prev + 1);
+    setWindowStack(prev => {
+      /* Do nothing if already at the top to prevent unnecessary state updates */
+      if (prev[prev.length - 1] === id) return prev;
+      
+      const newStack = prev.filter(winId => winId !== id);
+      return [...newStack, id];
+    });
+
     setWindows(prev => prev.map(win => 
-      win.id === id ? { ...win, zIndex: nextZIndex + 1, isMinimized: false } : win
+      win.id === id ? { ...win, isMinimized: false } : win
     ));
   };
 
   const spawnTerminal = () => {
     const newId = `term-${Date.now()}`;
-    const newZ = nextZIndex + 1;
-    setNextZIndex(newZ);
     
     setWindows(prev => [...prev, { 
       id: newId, 
       type: 'terminal', 
       isMinimized: false, 
       title: 'System Terminal',
-      zIndex: newZ
+      zIndex: 100 + windowStack.length
     }]);
+
+    setWindowStack(prev => [...prev, newId]);
   };
 
   useEffect(() => {
@@ -51,7 +71,9 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     const handleToggleSignal = (e: Event) => {
       const id = (e as CustomEvent).detail?.id;
       const win = windows.find(w => w.id === id);
-      if (win?.isMinimized) {
+      
+      /* Bring to front if minimized or not currently on top */
+      if (win?.isMinimized || windowStack[windowStack.length - 1] !== id) {
         bringToFront(id);
       } else {
         handleMinimize(id);
@@ -64,10 +86,11 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
       window.removeEventListener('dvirtos:spawn_app', handleSpawnSignal);
       window.removeEventListener('dvirtos:toggle_window', handleToggleSignal);
     };
-  }, [windows, nextZIndex]);
+  }, [windows, windowStack]);
 
   const handleClose = (id: string) => {
     setWindows(prev => prev.filter(win => win.id !== id));
+    setWindowStack(prev => prev.filter(winId => winId !== id));
   };
 
   const handleMinimize = (id: string) => {
@@ -79,20 +102,30 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
   return (
     <div className="window-manager-root w-full h-full relative overflow-hidden pointer-events-auto">
       {children}
-      {windows.map((win) => (
-        <div key={win.id} style={{ zIndex: win.zIndex }} className="absolute inset-0 pointer-events-none">
-          <div className="pointer-events-auto contents" onMouseDown={() => bringToFront(win.id)}>
-            {win.type === 'terminal' && (
-              <TerminalTest 
-                isMinimized={win.isMinimized}
-                zIndex={win.zIndex} // Passing Z to the app
-                onClose={() => handleClose(win.id)} 
-                onMinimize={() => handleMinimize(win.id)}
-              />
-            )}
+      {windows.map((win) => {
+        /* Calculate zIndex based on the stack position */
+        const stackIndex = windowStack.indexOf(win.id);
+        const dynamicZIndex = 100 + stackIndex;
+
+        return (
+          <div 
+            key={win.id} 
+            style={{ zIndex: dynamicZIndex }} 
+            className="absolute inset-0 pointer-events-none"
+          >
+            <div className="pointer-events-auto contents" onMouseDown={() => bringToFront(win.id)}>
+              {win.type === 'terminal' && (
+                <TerminalTest 
+                  isMinimized={win.isMinimized}
+                  zIndex={dynamicZIndex}
+                  onClose={() => handleClose(win.id)} 
+                  onMinimize={() => handleMinimize(win.id)}
+                />
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
