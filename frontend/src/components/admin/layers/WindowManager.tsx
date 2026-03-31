@@ -1,4 +1,5 @@
 import { useState, type ReactNode, useEffect } from 'react';
+import { useSession } from '../../../context/SessionContext';
 import { TerminalTest } from './apps/TerminalTest';
 
 interface WindowInstance {
@@ -16,16 +17,15 @@ interface WindowManagerProps {
 /**
  * Layer 3: Window Manager
  * Responsibility: Implements a Stack-based window management system.
- * Refined: Replaced incremental zIndex with a Stack array logic (Range: 100-800).
+ * Integrated: Layer status awareness (Active/Hidden/Terminated).
  */
 export const WindowManager = ({ children }: WindowManagerProps) => {
+  const { state } = useSession();
+  const status = state.layers?.windowManager || 'active';
+  
   const [windows, setWindows] = useState<WindowInstance[]>([]);
-  /* The stack stores window IDs in order of depth (last element = top) */
   const [windowStack, setWindowStack] = useState<string[]>([]);
 
-  /**
-   * Syncs the window list with their calculated Z-Index based on the stack.
-   */
   useEffect(() => {
     const updatedWindows = windows.map(win => ({
       ...win,
@@ -37,13 +37,10 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
 
   const bringToFront = (id: string) => {
     setWindowStack(prev => {
-      /* Do nothing if already at the top to prevent unnecessary state updates */
       if (prev[prev.length - 1] === id) return prev;
-      
       const newStack = prev.filter(winId => winId !== id);
       return [...newStack, id];
     });
-
     setWindows(prev => prev.map(win => 
       win.id === id ? { ...win, isMinimized: false } : win
     ));
@@ -51,15 +48,10 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
 
   const spawnTerminal = () => {
     const newId = `term-${Date.now()}`;
-    
     setWindows(prev => [...prev, { 
-      id: newId, 
-      type: 'terminal', 
-      isMinimized: false, 
-      title: 'System Terminal',
+      id: newId, type: 'terminal', isMinimized: false, title: 'System Terminal',
       zIndex: 100 + windowStack.length
     }]);
-
     setWindowStack(prev => [...prev, newId]);
   };
 
@@ -67,12 +59,9 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     const handleSpawnSignal = (e: Event) => {
       if ((e as CustomEvent).detail?.type === 'terminal') spawnTerminal();
     };
-    
     const handleToggleSignal = (e: Event) => {
       const id = (e as CustomEvent).detail?.id;
       const win = windows.find(w => w.id === id);
-      
-      /* Bring to front if minimized or not currently on top */
       if (win?.isMinimized || windowStack[windowStack.length - 1] !== id) {
         bringToFront(id);
       } else {
@@ -99,20 +88,23 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     ));
   };
 
+  /* If terminated, the session orchestrator handles it. We handle 'hidden' here */
+  if (status === 'terminated') return null;
+
   return (
-    <div className="window-manager-root w-full h-full relative overflow-hidden pointer-events-auto">
-      {children}
+    <div 
+      className={`window-manager-root w-full h-full relative overflow-hidden pointer-events-auto transition-opacity duration-300
+        ${status === 'hidden' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+    >
+      {/* Cascade Render: If DesktopShell is terminated, children won't render */}
+      {state.layers?.desktopShell !== 'terminated' && children}
+      
       {windows.map((win) => {
-        /* Calculate zIndex based on the stack position */
         const stackIndex = windowStack.indexOf(win.id);
         const dynamicZIndex = 100 + stackIndex;
 
         return (
-          <div 
-            key={win.id} 
-            style={{ zIndex: dynamicZIndex }} 
-            className="absolute inset-0 pointer-events-none"
-          >
+          <div key={win.id} style={{ zIndex: dynamicZIndex }} className="absolute inset-0 pointer-events-none">
             <div className="pointer-events-auto contents" onMouseDown={() => bringToFront(win.id)}>
               {win.type === 'terminal' && (
                 <TerminalTest 

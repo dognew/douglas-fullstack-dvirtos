@@ -3,6 +3,9 @@ import { useHardware } from '../hooks/useHardware';
 
 export type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'LOGIN' | 'DESKTOP';
 
+/* Define the operational status of a system layer */
+export type LayerStatus = 'active' | 'hidden' | 'terminated';
+
 interface SessionState {
   boot: {
     stage: BootStage;
@@ -18,7 +21,13 @@ interface SessionState {
   };
   storage: {
     session: Record<string, string | null>;
-    skipIntro: boolean; // Persisted intro state
+    skipIntro: boolean;
+  };
+  /* New: System layers visibility and lifecycle state */
+  layers: {
+    xserver: LayerStatus;
+    windowManager: LayerStatus;
+    desktopShell: LayerStatus;
   };
 }
 
@@ -27,7 +36,8 @@ interface SessionContextType {
   setStage: (stage: BootStage) => void;
   setSelectedOS: (os: string) => void;
   setAuth: (visitorType: string) => void;
-  setSkipIntro: (value: boolean) => void; // Function to persist preference
+  setSkipIntro: (value: boolean) => void;
+  setLayerStatus: (layerId: keyof SessionState['layers'], status: LayerStatus) => void; // New
   reboot: () => void;
   logoff: () => void;
 }
@@ -39,15 +49,18 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [stage, setStageState] = useState<BootStage>('BIOS');
   const [selectedOS, setSelectedOSState] = useState<string>('dvirtos');
   
-  /* Internal state management */
   const [visitorType, setVisitorType] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [skipIntro, setSkipIntroState] = useState(false);
   const [sessionRaw, setSessionRaw] = useState<Record<string, string | null>>({});
 
-  /**
-   * Syncs the virtual system storage with browser's session storage
-   */
+  /* New: State for system layers */
+  const [layers, setLayers] = useState<SessionState['layers']>({
+    xserver: 'active',
+    windowManager: 'active',
+    desktopShell: 'active'
+  });
+
   const updateStorageDump = useCallback(() => {
     const dump: Record<string, string | null> = {};
     for (let i = 0; i < sessionStorage.length; i++) {
@@ -56,7 +69,6 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     }
     setSessionRaw(dump);
     
-    /* Sync auth and preferences */
     const savedType = sessionStorage.getItem('selected_visitor_type');
     const savedIntro = sessionStorage.getItem('dvirtos_skip_intro') === 'true';
     
@@ -96,6 +108,14 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     setSkipIntroState(value);
   };
 
+  /* New: Function to manipulate system layers */
+  const setLayerStatus = (layerId: keyof SessionState['layers'], status: LayerStatus) => {
+    setLayers(prev => ({
+      ...prev,
+      [layerId]: status
+    }));
+  };
+
   const value: SessionContextType = {
     state: {
       boot: { stage, selectedOS },
@@ -104,12 +124,14 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
       storage: { 
         session: sessionRaw,
         skipIntro 
-      }
+      },
+      layers // Injected into state
     },
     setStage: setStageState,
     setSelectedOS: setSelectedOSState,
     setAuth,
     setSkipIntro,
+    setLayerStatus, // Exposed to the system
     reboot,
     logoff
   };

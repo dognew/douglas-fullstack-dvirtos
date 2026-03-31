@@ -18,13 +18,16 @@ interface DesktopShellProps {
 /**
  * Layer 4: Desktop Shell
  * Responsibility: Renders wallpaper, taskbar, system tray, and desktop workspace icons.
- * Technical: Implements System Z-Layers (Taskbar @ z-900).
+ * Technical: Implements System Z-Layers (Taskbar @ z-900) and Layer Status awareness.
  */
 export const DesktopShell = ({ children }: DesktopShellProps) => {
   const { state, logoff, reboot } = useSession();
   const { selectedOS } = state.boot;
   const [activeWindows, setActiveWindows] = useState<any[]>([]);
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
+
+  /* New: Get operational status for Layer 4 */
+  const status = state.layers?.desktopShell || 'active';
 
   useEffect(() => {
     const syncWindows = (e: Event) => {
@@ -72,8 +75,21 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
     }
   ];
 
+  /* 
+     Logic: Terminated Status
+     If the layer is terminated, we bypass rendering the UI shell 
+     but keep the UserSpace (children) active to avoid breaking the stack.
+  */
+  if (status === 'terminated') {
+    return <div className="h-full w-full bg-transparent">{children}</div>;
+  }
+
   return (
-    <div className="h-full w-full flex flex-col font-ubuntu relative overflow-hidden bg-[#0A0A0A] cursor-x11-left-ptr">
+    <div 
+      className={`h-full w-full flex flex-col font-ubuntu relative overflow-hidden bg-[#0A0A0A] cursor-x11-left-ptr transition-opacity duration-300
+        ${status === 'hidden' ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+      `}
+    >
       
       {/* 
           Start Menu Overlay 
@@ -129,6 +145,7 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
                 ? 'bg-[#E4C844]/30 border-[#E4C844]/60 shadow-[0_0_15px_rgba(228,200,68,0.3)]' 
                 : 'bg-[#E4C844]/10 border-[#E4C844]/30 hover:bg-[#E4C844]/20'}`}
           >
+            {/* System Logo: Ensured fixed dimensions to prevent 0px rendering */}
             <img 
               src="/dvirtos/usr/share/icons/dvirtos_logos/dvirtos-logo.svg"
               alt="Start"
@@ -162,6 +179,7 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
           </div>
         </div>
 
+        {/* System Tray Area */}
         <div className="flex items-center gap-2 px-2">
           <div className="hidden lg:flex items-center gap-1 mr-2">
             <NetworkApplet />
