@@ -19,7 +19,7 @@ interface WindowProps {
   initialY?: number;
   isActive?: boolean;
   isMinimized?: boolean;
-  zIndex?: number; // Integrando a nova feature de profundidade
+  zIndex?: number; // System depth integration
   className?: string;
   config?: WindowConfig;
   onClose?: () => void;
@@ -27,8 +27,9 @@ interface WindowProps {
 }
 
 /**
- * Layer 3: Window Component (Engine v2.1)
- * Responsibility: Handles decorations, geometric states, multi-direction resizing, and Z-Index.
+ * Layer 3: Window Component (Engine v2.2)
+ * Responsibility: Handles decorations, geometric states, and dynamic Z-Index depth.
+ * Refined: Maximization logic respects Taskbar height (Layer 4 footer).
  */
 export const Window = ({ 
   title, 
@@ -83,11 +84,11 @@ export const Window = ({
         ${className}
       `}
       style={{
-        width: `${rect.w}px`,
-        height: `${rect.h}px`,
-        left: `${rect.x}px`,
-        top: `${rect.y}px`,
-        zIndex: zIndex, // Nova feature integrada com sucesso
+        width: isMaximized ? '100%' : `${rect.w}px`,
+        height: isMaximized ? 'calc(100% - 48px)' : `${rect.h}px`,
+        left: isMaximized ? '0' : `${rect.x}px`,
+        top: isMaximized ? '0' : `${rect.y}px`,
+        zIndex: zIndex, 
         backgroundColor: 'var(--win-bg, #1A1A1A)',
         border: hideDecorations ? 'none' : 'var(--win-border, 1px solid rgba(255,255,255,0.1))',
         borderRadius: isMaximized || hideDecorations ? '0px' : 'var(--win-radius, 8px)',

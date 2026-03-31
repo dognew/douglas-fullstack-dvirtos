@@ -18,7 +18,7 @@ interface DesktopShellProps {
 /**
  * Layer 4: Desktop Shell
  * Responsibility: Renders wallpaper, taskbar, system tray, and desktop workspace icons.
- * Technical: Fixed Start Menu SVG visibility and integrated outside-click handler.
+ * Technical: Implements System Z-Layers (Taskbar @ z-900).
  */
 export const DesktopShell = ({ children }: DesktopShellProps) => {
   const { state, logoff, reboot } = useSession();
@@ -77,23 +77,23 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
       
       {/* 
           Start Menu Overlay 
-          Invisible layer to close menu when clicking outside. 
+          Layer: z-[940] (Below StartMenu @ 950, Above Taskbar @ 900)
       */}
       {isStartMenuOpen && (
         <div 
-          className="absolute inset-0 z-[55] bg-transparent" 
+          className="absolute inset-0 z-[940] bg-transparent" 
           onClick={() => setIsStartMenuOpen(false)}
         />
       )}
 
-      {/* Start Menu Component */}
+      {/* Start Menu Component (Internal z-index handled in component: z-[950]) */}
       <StartMenu 
         isOpen={isStartMenuOpen} 
         onClose={() => setIsStartMenuOpen(false)} 
         onSpawnApp={spawnApp}
       />
 
-      {/* Wallpaper Layer */}
+      {/* Wallpaper Layer (z-0) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-40">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#B87C00]/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#D0980C]/20 blur-[120px] rounded-full" />
@@ -106,7 +106,9 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
         </div>
       </div>
 
-      {/* Main Workspace: Desktop Icons Grid & Windows */}
+      {/* Main Workspace: Desktop Icons Grid & Windows (UserSpace Layer) 
+          Layer: z-10 (Windows start at z-100 inside children)
+      */}
       <main className="flex-1 relative z-10 p-6 flex flex-col flex-wrap gap-4 content-start">
         {desktopIcons.map(icon => (
           <DesktopIcon key={icon.id} config={icon} />
@@ -114,8 +116,10 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
         {children}
       </main>
 
-      {/* Taskbar */}
-      <footer className="h-12 w-full bg-[#1A1A1A]/90 backdrop-blur-md border-t border-white/5 flex items-center justify-between px-2 z-50">
+      {/* Taskbar (System Dock Layer)
+          Layer: z-[900] (Always above apps/windows)
+      */}
+      <footer className="h-12 w-full bg-[#1A1A1A]/90 backdrop-blur-md border-t border-white/5 flex items-center justify-between px-2 z-[900]">
         <div className="flex items-center gap-2">
           {/* Start Menu Button Trigger */}
           <button 
@@ -125,7 +129,6 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
                 ? 'bg-[#E4C844]/30 border-[#E4C844]/60 shadow-[0_0_15px_rgba(228,200,68,0.3)]' 
                 : 'bg-[#E4C844]/10 border-[#E4C844]/30 hover:bg-[#E4C844]/20'}`}
           >
-            {/* System Logo: Ensured fixed dimensions to prevent 0px rendering */}
             <img 
               src="/dvirtos/usr/share/icons/dvirtos_logos/dvirtos-logo.svg"
               alt="Start"
@@ -159,7 +162,6 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
           </div>
         </div>
 
-        {/* System Tray Area */}
         <div className="flex items-center gap-2 px-2">
           <div className="hidden lg:flex items-center gap-1 mr-2">
             <NetworkApplet />
