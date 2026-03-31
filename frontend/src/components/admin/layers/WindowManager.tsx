@@ -1,10 +1,11 @@
 import { useState, type ReactNode, useEffect } from 'react';
 import { useSession } from '../../../context/SessionContext';
 import { TerminalTest } from './apps/TerminalTest';
+import { DesktopSettings } from './apps/DesktopSettings';
 
 interface WindowInstance {
   id: string;
-  type: 'terminal';
+  type: 'terminal' | 'settings'; // Updated: Added settings type
   isMinimized: boolean;
   title: string;
   zIndex: number; 
@@ -14,11 +15,6 @@ interface WindowManagerProps {
   children: ReactNode;
 }
 
-/**
- * Layer 3: Window Manager
- * Responsibility: Implements a Stack-based window management system.
- * Integrated: Layer status awareness (Active/Hidden/Terminated).
- */
 export const WindowManager = ({ children }: WindowManagerProps) => {
   const { state } = useSession();
   const status = state.layers?.windowManager || 'active';
@@ -55,10 +51,23 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     setWindowStack(prev => [...prev, newId]);
   };
 
+  /* New: Logical Spawn for Desktop Settings */
+  const spawnSettings = () => {
+    const newId = `settings-${Date.now()}`;
+    setWindows(prev => [...prev, { 
+      id: newId, type: 'settings', isMinimized: false, title: 'Desktop Settings',
+      zIndex: 100 + windowStack.length
+    }]);
+    setWindowStack(prev => [...prev, newId]);
+  };
+
   useEffect(() => {
     const handleSpawnSignal = (e: Event) => {
-      if ((e as CustomEvent).detail?.type === 'terminal') spawnTerminal();
+      const type = (e as CustomEvent).detail?.type;
+      if (type === 'terminal') spawnTerminal();
+      if (type === 'settings') spawnSettings(); // Now listening to settings signal
     };
+
     const handleToggleSignal = (e: Event) => {
       const id = (e as CustomEvent).detail?.id;
       const win = windows.find(w => w.id === id);
@@ -88,7 +97,6 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     ));
   };
 
-  /* If terminated, the session orchestrator handles it. We handle 'hidden' here */
   if (status === 'terminated') return null;
 
   return (
@@ -96,7 +104,6 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
       className={`window-manager-root w-full h-full relative overflow-hidden pointer-events-auto transition-opacity duration-300
         ${status === 'hidden' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
     >
-      {/* Cascade Render: If DesktopShell is terminated, children won't render */}
       {state.layers?.desktopShell !== 'terminated' && children}
       
       {windows.map((win) => {
@@ -112,6 +119,13 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
                   zIndex={dynamicZIndex}
                   onClose={() => handleClose(win.id)} 
                   onMinimize={() => handleMinimize(win.id)}
+                />
+              )}
+              {/* New: Conditional rendering for settings app */}
+              {win.type === 'settings' && (
+                <DesktopSettings 
+                  zIndex={dynamicZIndex}
+                  onClose={() => handleClose(win.id)} 
                 />
               )}
             </div>
