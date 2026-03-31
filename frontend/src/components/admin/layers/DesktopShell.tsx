@@ -38,6 +38,17 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
     return () => window.removeEventListener('dvirtos:window_list_update', syncWindows);
   }, []);
 
+  useEffect(() => {
+    // Only trigger if the layer is active to avoid spawning on hidden layers
+    if (status === 'active') {
+      const timer = setTimeout(() => {
+        spawnApp('welcome'); // Triggers the signal for WindowManager
+      }, 2000);
+
+      return () => clearTimeout(timer); // Cleanup if layer is unmounted or terminated
+    }
+  }, [status]); // Listen to layer status changes
+
   /* 
      REFINED: Context Menu Hijacker 
      Ensures the browser's default menu is completely blocked 

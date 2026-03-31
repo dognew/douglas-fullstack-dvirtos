@@ -2,10 +2,11 @@ import { useState, type ReactNode, useEffect } from 'react';
 import { useSession } from '../../../context/SessionContext';
 import { TerminalTest } from './apps/TerminalTest';
 import { DesktopSettings } from './apps/DesktopSettings';
+import { WelcomeApp } from './apps/WelcomeApp';
 
 interface WindowInstance {
   id: string;
-  type: 'terminal' | 'settings'; // Updated: Added settings type
+  type: 'terminal' | 'settings' | 'welcome';
   isMinimized: boolean;
   title: string;
   zIndex: number; 
@@ -21,6 +22,15 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
   
   const [windows, setWindows] = useState<WindowInstance[]>([]);
   const [windowStack, setWindowStack] = useState<string[]>([]);
+
+  const spawnWelcome = () => {
+    const newId = `welcome-${Date.now()}`;
+    setWindows(prev => [...prev, { 
+      id: newId, type: 'welcome', isMinimized: false, title: 'Welcome',
+      zIndex: 100 + windowStack.length
+    }]);
+    setWindowStack(prev => [...prev, newId]);
+  };
 
   useEffect(() => {
     const updatedWindows = windows.map(win => ({
@@ -65,7 +75,8 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     const handleSpawnSignal = (e: Event) => {
       const type = (e as CustomEvent).detail?.type;
       if (type === 'terminal') spawnTerminal();
-      if (type === 'settings') spawnSettings(); // Now listening to settings signal
+      if (type === 'settings') spawnSettings();
+      if (type === 'welcome') spawnWelcome();
     };
 
     const handleToggleSignal = (e: Event) => {
@@ -124,6 +135,12 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
               {/* New: Conditional rendering for settings app */}
               {win.type === 'settings' && (
                 <DesktopSettings 
+                  zIndex={dynamicZIndex}
+                  onClose={() => handleClose(win.id)} 
+                />
+              )}
+              {win.type === 'welcome' && (
+                <WelcomeApp 
                   zIndex={dynamicZIndex}
                   onClose={() => handleClose(win.id)} 
                 />
