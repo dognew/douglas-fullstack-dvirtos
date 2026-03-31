@@ -19,7 +19,7 @@ interface WindowProps {
   initialY?: number;
   isActive?: boolean;
   isMinimized?: boolean;
-  zIndex?: number; // System depth integration
+  zIndex?: number;
   className?: string;
   config?: WindowConfig;
   onClose?: () => void;
@@ -27,9 +27,9 @@ interface WindowProps {
 }
 
 /**
- * Layer 3: Window Component (Engine v2.2)
+ * Layer 3: Window Component (Engine v2.3)
  * Responsibility: Handles decorations, geometric states, and dynamic Z-Index depth.
- * Refined: Maximization logic respects Taskbar height (Layer 4 footer).
+ * Refined: Maximization logic and cursor propagation fix (X11 Pointer).
  */
 export const Window = ({ 
   title, 
@@ -81,7 +81,7 @@ export const Window = ({
         ${isActive ? 'ring-1 ring-[#FCF87C]/30' : 'opacity-80'}
         ${isDragging || isResizing ? 'shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-[1.005]' : ''}
         ${isMaximized ? 'rounded-none border-none' : 'rounded-lg overflow-hidden'}
-        ${className}
+        ${className} cursor-x11-left-ptr
       `}
       style={{
         width: isMaximized ? '100%' : `${rect.w}px`,
@@ -151,7 +151,7 @@ export const Window = ({
       )}
 
       {/* Window Content */}
-      <div className="flex-1 overflow-auto bg-[#0D0D0D] p-4 text-xs font-mono text-white/80 select-text">
+      <div className="flex-1 overflow-auto bg-[#0D0D0D] p-4 text-xs font-mono text-white/80 select-text cursor-x11-left-ptr">
         {children}
       </div>
     </div>
