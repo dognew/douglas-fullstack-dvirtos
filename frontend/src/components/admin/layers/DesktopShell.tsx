@@ -9,6 +9,7 @@ import { BatteryApplet } from './shell/applets/BatteryApplet';
 
 /* UI Imports */
 import { DesktopIcon, type DesktopIconConfig } from './shell/DesktopIcon';
+import { StartMenu } from './shell/StartMenu';
 
 interface DesktopShellProps {
   children?: ReactNode;
@@ -17,11 +18,13 @@ interface DesktopShellProps {
 /**
  * Layer 4: Desktop Shell
  * Responsibility: Renders wallpaper, taskbar, system tray, and desktop workspace icons.
+ * Technical: Fixed Start Menu SVG visibility and integrated outside-click handler.
  */
 export const DesktopShell = ({ children }: DesktopShellProps) => {
   const { state, logoff, reboot } = useSession();
   const { selectedOS } = state.boot;
   const [activeWindows, setActiveWindows] = useState<any[]>([]);
+  const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
 
   useEffect(() => {
     const syncWindows = (e: Event) => {
@@ -71,6 +74,25 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
 
   return (
     <div className="h-full w-full flex flex-col font-ubuntu relative overflow-hidden bg-[#0A0A0A] cursor-x11-left-ptr">
+      
+      {/* 
+          Start Menu Overlay 
+          Invisible layer to close menu when clicking outside. 
+      */}
+      {isStartMenuOpen && (
+        <div 
+          className="absolute inset-0 z-[55] bg-transparent" 
+          onClick={() => setIsStartMenuOpen(false)}
+        />
+      )}
+
+      {/* Start Menu Component */}
+      <StartMenu 
+        isOpen={isStartMenuOpen} 
+        onClose={() => setIsStartMenuOpen(false)} 
+        onSpawnApp={spawnApp}
+      />
+
       {/* Wallpaper Layer */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-40">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#B87C00]/10 blur-[120px] rounded-full" />
@@ -86,20 +108,33 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
 
       {/* Main Workspace: Desktop Icons Grid & Windows */}
       <main className="flex-1 relative z-10 p-6 flex flex-col flex-wrap gap-4 content-start">
-        {/* Render Desktop Icons from Object List */}
         {desktopIcons.map(icon => (
           <DesktopIcon key={icon.id} config={icon} />
         ))}
-
-        {/* User Space Windows (Layer 5) */}
         {children}
       </main>
 
       {/* Taskbar */}
       <footer className="h-12 w-full bg-[#1A1A1A]/90 backdrop-blur-md border-t border-white/5 flex items-center justify-between px-2 z-50">
         <div className="flex items-center gap-2">
-          <button className="w-9 h-9 rounded bg-[#E4C844]/10 border border-[#E4C844]/30 flex items-center justify-center hover:bg-[#E4C844]/20 transition-all cursor-x11-pointer">
-            <div className="w-3 h-3 bg-[#FCF87C] rounded-sm shadow-[0_0_8px_#FCF87C]" />
+          {/* Start Menu Button Trigger */}
+          <button 
+            onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}
+            className={`w-9 h-9 rounded flex items-center justify-center transition-all cursor-x11-pointer border
+              ${isStartMenuOpen 
+                ? 'bg-[#E4C844]/30 border-[#E4C844]/60 shadow-[0_0_15px_rgba(228,200,68,0.3)]' 
+                : 'bg-[#E4C844]/10 border-[#E4C844]/30 hover:bg-[#E4C844]/20'}`}
+          >
+            {/* System Logo: Ensured fixed dimensions to prevent 0px rendering */}
+            <img 
+              src="/dvirtos/usr/share/icons/dvirtos_logos/dvirtos-logo.svg"
+              alt="Start"
+              className="w-5 h-5 min-w-[20px] min-h-[20px] object-contain select-none pointer-events-none drop-shadow-[0_0_5px_rgba(252,248,124,0.5)]"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement?.insertAdjacentHTML('afterbegin', '<div class="w-3 h-3 bg-[#FCF87C] rounded-sm"></div>');
+              }}
+            />
           </button>
 
           <div className="h-6 w-[1px] bg-white/10 mx-1" />
