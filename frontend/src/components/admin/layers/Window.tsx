@@ -19,6 +19,7 @@ interface WindowProps {
   initialY?: number;
   isActive?: boolean;
   isMinimized?: boolean;
+  zIndex?: number; // Integrando a nova feature de profundidade
   className?: string;
   config?: WindowConfig;
   onClose?: () => void;
@@ -26,8 +27,8 @@ interface WindowProps {
 }
 
 /**
- * Layer 3: Window Component (Engine v2)
- * Responsibility: Handles decorations, geometric states, and config-based rendering.
+ * Layer 3: Window Component (Engine v2.1)
+ * Responsibility: Handles decorations, geometric states, multi-direction resizing, and Z-Index.
  */
 export const Window = ({ 
   title, 
@@ -38,6 +39,7 @@ export const Window = ({
   initialY = 100, 
   isActive = true,
   isMinimized = false,
+  zIndex = 10,
   className = "",
   onClose,
   onMinimize,
@@ -60,26 +62,24 @@ export const Window = ({
     isResizing 
   } = useWindowInteractions(initialX, initialY, initialW, initialH);
 
-  /* Inject window-specific styles from the virtual theme */
+  /* Restore Theme Injection */
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = '/dvirtos/usr/share/themes/dvirtos-default/window.css';
     document.head.appendChild(link);
-    return () => {
-      /* Cleanup is handled by the browser or session reset */
-    };
   }, []);
+
+  if (isMinimized) return null;
 
   const hideDecorations = config.isFrameless;
 
   return (
     <div 
       className={`window-frame absolute flex flex-col shadow-2xl select-none transition-all
-        ${isActive ? 'z-50 ring-1 ring-[#FCF87C]/30' : 'z-10 opacity-80'}
+        ${isActive ? 'ring-1 ring-[#FCF87C]/30' : 'opacity-80'}
         ${isDragging || isResizing ? 'shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-[1.005]' : ''}
         ${isMaximized ? 'rounded-none border-none' : 'rounded-lg overflow-hidden'}
-        ${isMinimized ? 'window-min-retro' : ''} 
         ${className}
       `}
       style={{
@@ -87,13 +87,14 @@ export const Window = ({
         height: `${rect.h}px`,
         left: `${rect.x}px`,
         top: `${rect.y}px`,
+        zIndex: zIndex, // Nova feature integrada com sucesso
         backgroundColor: 'var(--win-bg, #1A1A1A)',
         border: hideDecorations ? 'none' : 'var(--win-border, 1px solid rgba(255,255,255,0.1))',
         borderRadius: isMaximized || hideDecorations ? '0px' : 'var(--win-radius, 8px)',
       } as React.CSSProperties}
     >
-      {/* Resizers: Only active if normal state */}
-      {!isMaximized && !isMinimized && config.canResize && !hideDecorations && (
+      {/* RESTORED: Multi-direction Resizers with custom X11 cursors */}
+      {!isMaximized && config.canResize && !hideDecorations && (
         <>
           <div onMouseDown={(e) => startResize(e, 'n')} className="absolute -top-1 inset-x-0 h-2 cursor-x11-size-ver z-40" />
           <div onMouseDown={(e) => startResize(e, 'w')} className="absolute inset-y-0 -left-1 w-2 cursor-x11-size-hor z-30" />
@@ -105,9 +106,9 @@ export const Window = ({
       {/* Title Bar */}
       {config.hasTitleBar && !hideDecorations && (
         <div 
-          onMouseDown={!isMinimized ? startDrag : undefined}
+          onMouseDown={startDrag}
           className={`title-bar h-8 flex items-center justify-between px-3 border-b border-white/5 
-            ${isMaximized || isMinimized ? 'cursor-x11-default' : 'cursor-x11-default active:cursor-grabbing'}`}
+            ${isMaximized ? 'cursor-x11-default' : 'cursor-x11-default active:cursor-grabbing'}`}
           style={{ background: 'var(--win-title-bg, #2A2A2A)' }}
         >
           <div className="flex items-center gap-2 pointer-events-none">
@@ -123,11 +124,11 @@ export const Window = ({
                     onClick={onMinimize}
                     className="w-6 h-6 flex items-center justify-center hover:bg-white/5 rounded transition-colors cursor-x11-pointer"
                 >
-                    <i className={`bi ${isMinimized ? 'bi-plus-lg' : 'bi-dash'} text-white/40 text-lg`}></i>
+                    <i className="bi bi-dash text-white/40 text-lg"></i>
                 </button>
             )}
             
-            {config.canMaximize && !isMinimized && (
+            {config.canMaximize && (
                 <button 
                     onClick={toggleMaximize}
                     className="w-6 h-6 flex items-center justify-center hover:bg-white/5 rounded transition-colors cursor-x11-pointer"
@@ -149,7 +150,7 @@ export const Window = ({
       )}
 
       {/* Window Content */}
-      <div className="flex-1 overflow-auto bg-[#0D0D0D] p-4 text-xs font-mono text-white/80">
+      <div className="flex-1 overflow-auto bg-[#0D0D0D] p-4 text-xs font-mono text-white/80 select-text">
         {children}
       </div>
     </div>
