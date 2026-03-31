@@ -1,0 +1,22 @@
+/**
+ * Layer 3: Window Management Styles
+ * Handles decorations and retro-style minimization states.
+ */
+
+.window-min-retro {
+    width: 220px !important;
+    height: 32px !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 10px !important; /* Future: Taskbar will calculate this offset */
+    position: absolute !important;
+    overflow: hidden !important;
+    z-index: 10 !important;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #000;
+}
+
+/* Collapses content area when window is in retro-minimized state */
+.window-min-retro .flex-1.overflow-auto {
+    display: none !important;
+}

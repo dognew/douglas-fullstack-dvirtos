@@ -1,6 +1,20 @@
 import { useState } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { useHardware } from './hooks/useHardware';
+
+// Context & Admin
+import { SessionProvider, useSession } from './context/SessionContext';
+import { AdminShell } from './components/admin/AdminShell';
+import { useAdminKeys } from './hooks/useAdminKeys';
+
+// Layers (Camadas 0 e 1)
+import { SessionManager } from './components/admin/layers/SessionManager';
+import { XServer } from './components/admin/layers/XServer';
+
+// Layer 3
+import { WindowManager } from './components/admin/layers/WindowManager';
+import { DesktopShell } from './components/admin/layers/DesktopShell';
+
+// Your Components
 import BiosScreen from './components/boot/BiosScreen';
 import BiosSetup from './components/bios/BiosSetup';
 import BootMenu from './components/boot/BootMenu';
@@ -9,33 +23,23 @@ import GrubScreen from './components/boot/GrubScreen';
 import PlymouthScreen from './components/boot/PlymouthScreen';
 import LoginScreen from './components/boot/LoginScreen';
 
-type BootStage = 'BIOS' | 'SETUP' | 'BOOT_MENU' | 'BOOT_ERROR' | 'GRUB' | 'PLYMOUTH' | 'LOGIN' | 'DESKTOP';
+function SystemBootstrap() {
+  const { state, setStage, setSelectedOS, reboot } = useSession();
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
-export default function App() {
-  const [stage, setStage] = useState<BootStage>('BIOS');
-  const { specs, loading } = useHardware();
-  const [selectedOS, setSelectedOS] = useState<string>('dvirtos');
+  // Backdoor trigger: Ctrl + Alt + S
+  useAdminKeys(() => setIsAdminOpen(prev => !prev));
 
-  // Function to simulate Reboot (reset state)
-  const reboot = () => {
-    setStage('BIOS');
-    // Trigger a full page refresh to clear memory/cache
-    window.location.reload();
-  };
+  const { stage, selectedOS } = state.boot;
+  const { specs, loading } = state.hardware;
 
-  const logoff = () => {
-    sessionStorage.removeItem('selected_visitor_type');
-    setStage('LOGIN');
-  };
-
-  // Show black screen while loading hardware specs
   if (loading) {
     return <div className="bg-black min-h-screen" />;
   }
 
   return (
     <div className="bg-black min-h-screen text-white font-mono overflow-hidden">
-
+      
       {stage === 'BIOS' && (
         <BiosScreen
           specs={specs}
@@ -46,10 +50,7 @@ export default function App() {
       )}
 
       {stage === 'SETUP' && (
-        <BiosSetup
-          specs={specs}
-          onExit={reboot}
-        />
+        <BiosSetup specs={specs} onExit={reboot} />
       )}
 
       {stage === 'BOOT_MENU' && (
@@ -86,43 +87,36 @@ export default function App() {
         />
       )}
 
+      {/* Stage: Desktop Environment (Full Layer Stack) */}
       {stage === 'DESKTOP' && (
-        <div className="h-screen w-full flex flex-col items-center justify-center bg-[#000000] relative overflow-hidden font-ubuntu">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#B87C00]/10 blur-[120px] rounded-full" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#D0980C]/50 blur-[120px] rounded-full" />
-
-          <div className="z-10 text-center space-y-6">
-            <div className="space-y-2">
-              <h1 className="text-7xl font-bold text-[#FCF87C] drop-shadow-[0_0_20px_rgba(228,200,68,0.3)] tracking-tighter">
-                D-VirtOS
-              </h1>
-              <div className="h-1 w-32 bg-gradient-to-r from-transparent via-[#E4C844] to-transparent mx-auto" />
-            </div>
-
-            <p className="text-[#E4C844]/60 font-mono tracking-[0.5em] uppercase text-sm animate-pulse">
-              {selectedOS === 'dvirtos'
-                ? 'Environment Authenticated'
-                : `System Loaded: ${selectedOS}`}
-            </p>
-            
-            <div className="flex gap-4 justify-center mt-12 bg-transparent">
-              <button
-                onClick={logoff}
-                className="px-6 py-2 border border-[#B87C00]/40 text-[#B87C00] hover:bg-[#FCF87C] hover:text-black focus:outline-0 focus:ring-0 outline-none transition-all duration-500 text-xs tracking-widest uppercase rounded-full flex items-center gap-2"
-              >
-                <i className="bi bi-box-arrow-right"></i> Logoff
-              </button>
-
-              <button
-                onClick={reboot}
-                className="px-6 py-2 border border-red-900/40 text-red-500/70 hover:bg-red-700 hover:text-white focus:outline-0 focus:ring-0 outline-none transition-all duration-500 text-xs tracking-widest uppercase rounded-full flex items-center gap-2"
-              >
-                <i className="bi bi-arrow-clockwise"></i> Reboot
-              </button>
-            </div>
-          </div>
-        </div>
+        /* Layer 0: Session Orchestration & Kernel Logic */
+        <SessionManager>
+          {/* Layer 1: X11 Graphic Server (Canvas & Cursors) */}
+          <XServer>
+            {/* Layer 3: Window Manager (Window Decors & Z-Index) */}
+            <WindowManager>
+              {/* Layer 4: Desktop Shell (Wallpaper & System UI) */}
+              <DesktopShell>
+                {/* 
+                   Layer 5: User Space
+                   Future applications will be rendered here via Window instances.
+                */}
+              </DesktopShell>
+            </WindowManager>
+          </XServer>
+        </SessionManager>
       )}
+
+      {/* The Admin Backdoor Layer (Always on top) */}
+      <AdminShell isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <SessionProvider>
+      <SystemBootstrap />
+    </SessionProvider>
   );
 }
