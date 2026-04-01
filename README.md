@@ -67,3 +67,99 @@ Upon successful "login," the user enters a multi-window graphical user interface
 
 The backend API will be available at `http://localhost:8000`.
 
+
+## 🏗️ Project Architecture
+
+D-VirtOS follows a strict layer-based architecture, mirroring the separation of concerns found in modern Unix-like operating systems.
+
+### 📂 Filesystem Hierarchy & Layer Mapping
+
+* **`/public/dvirtos/usr/share`**: Static assets following the **FHS (Filesystem Hierarchy Standard)**. Contains system themes, X11 cursors, and icons.
+* **`src/kernel/`**: Core orchestration (**Layers 0-3**). Manages sessions, display servers (XServer), and window stacking.
+* **`src/system/`**: The **D-VirtUI Toolkit**. Shared system libraries and reusable UI controls (The "DLLs" of the OS).
+* **`src/shell/`**: **Layer 4** (Desktop Environment). Handles the Taskbar, Start Menu, and Desktop interaction logic.
+* **`src/apps/`**: **Layer 5** (User Space). Virtual applications running within the system environment.
+
+### 🌳 Project Structure
+
+```text
+frontend/
+├── 📂 public/ (Static Assets Layer - FHS Style)
+│   ├── 📂 dvirtos/
+│   │   └── 📂 usr/
+│   │       └── 📂 share/
+│   │           ├── 📂 icons/
+│   │           │   ├── 📂 dvirtos-cursors/
+│   │           │   │   ├── 📂 cursors/ (left_ptr.svg, x-cursor.svg, etc.)
+│   │           │   │   └── index.theme
+│   │           │   └── 📂 dvirtos_logos/ (dvirtos-logo.svg)
+│   │           └── 📂 themes/
+│   │               └── 📂 dvirtos-default/ (cursor.css, window.css)
+│   ├── 📂 icons/
+│   │   └── 📂 os/ (biglinux.svg, debian.svg, linuxmint.svg)
+│   ├── .htaccess
+│   └── logo-dognew-white-gold.svg
+│
+├── 📂 src/ (System Source Code & Logic)
+│   ├── 📂 assets/
+│   │   ├── 📂 fonts/ (eightbit-atari-90.ttf)
+│   │   └── react.svg
+│   │
+│   ├── 📂 components/
+│   │   ├── 📂 boot/ (Layer 1: Boot Sequence - BIOS, GRUB, Login)
+│   │   │   ├── 📂 bios/ (BiosSetup.tsx, ExitModal.tsx)
+│   │   │   ├── 📂 grub/ (GrubBackground.tsx, GrubScreen.tsx)
+│   │   │   ├── BiosScreen.tsx
+│   │   │   ├── BootMenu.tsx
+│   │   │   └── LoginScreen.tsx
+│   │   │
+│   │   ├── 📂 kernel/ (Layers 0-3: The System Engine)
+│   │   │   ├── SessionManager.tsx
+│   │   │   ├── WindowManager.tsx
+│   │   │   └── XServer.tsx
+│   │   │
+│   │   ├── 📂 system/ (D-VirtUI Toolkit: Libraries & Shared)
+│   │   │   ├── 📂 Window/
+│   │   │   │   └── Window.tsx
+│   │   │   ├── 📂 Controls/ (Future: SysButton.tsx, SysInput.tsx)
+│   │   │   ├── 📂 Admin/ (Backdoor Tools & Inspection)
+│   │   │   │   ├── AdminShell.tsx
+│   │   │   │   └── SessionInspector.tsx
+│   │   │   └── 📂 Shared/ (BootTimer.tsx)
+│   │   │
+│   │   ├── 📂 shell/ (Layer 4: Desktop Environment)
+│   │   │   ├── 📂 taskbar/
+│   │   │   │   └── 📂 applets/ (Battery, Clock, Network, Volume)
+│   │   │   ├── 📂 desktop/ (DesktopIcon.tsx)
+│   │   │   ├── StartMenu.tsx
+│   │   │   └── DesktopShell.tsx
+│   │   │
+│   │   └── 📂 apps/ (Layer 5: User Space / Virtual Binaries)
+│   │       ├── 📂 Terminal/ (TerminalTest.tsx)
+│   │       ├── 📂 Settings/ (DesktopSettings.tsx)
+│   │       └── 📂 Welcome/ (WelcomeApp.tsx)
+│   │
+│   ├── 📂 context/ (Global System State)
+│   │   └── SessionContext.tsx
+│   │
+│   ├── 📂 hooks/ (Hardware & Interaction Abstractions)
+│   │   ├── useAdminKeys.ts
+│   │   ├── useHardware.ts
+│   │   └── useWindowInteractions.ts
+│   │
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
+│
+└── 📂 dist/ (Optimized Production Build)
+```
+
+### 🧩 System Layers Responsibility Matrix
+
+| Layer | Component | Responsibility |
+| :--- | :--- | :--- |
+| **0** | SessionManager | Global state orchestration, hardware simulation, and persistence. |
+| **1** | XServer | Display server simulation, input masking, and stippled canvas. |
+| **3** | WindowManager | Window lifecycle management, stacking (z-index), and geometry. |
+| **4** | DesktopShell | UI shell environment, Taskbar, Start Menu, and Desktop Grid. |
+| **5** | UserSpace | Final virtual applications (Terminal, Settings, Welcome App). |

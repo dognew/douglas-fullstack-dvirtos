@@ -66,3 +66,99 @@ Após um "login" bem-sucedido, o usuário entra em uma interface gráfica de usu
     Abra seu navegador e navegue para `http://localhost:5173`.
 
 A API do backend estará disponível em `http://localhost:8000`.
+
+## 🏗️ Arquitetura do Projeto
+
+O D-VirtOS segue uma arquitetura estrita baseada em camadas, espelhando a separação de responsabilidades encontrada em sistemas operacionais modernos baseados em Unix.
+
+### 📂 Hierarquia do Sistema de Arquivos e Mapeamento de Camadas
+
+* **`/public/dvirtos/usr/share`**: Assets estáticos seguindo o **FHS (Filesystem Hierarchy Standard)**. Contém temas do sistema, cursores do X11 e ícones.
+* **`src/kernel/`**: Orquestração central (**Camadas 0-3**). Gerencia sessões, servidores de exibição (XServer) e empilhamento de janelas.
+* **`src/system/`**: O **D-VirtUI Toolkit**. Bibliotecas de sistema compartilhadas e controles de UI reutilizáveis (As "DLLs" do SO).
+* **`src/shell/`**: **Camada 4** (Ambiente de Desktop). Lida com a Barra de Tarefas, Menu Iniciar e lógica de interação com o Desktop.
+* **`src/apps/`**: **Camada 5** (Espaço do Usuário). Aplicações virtuais rodando dentro do ambiente do sistema.
+
+### 🌳 Estrutura do Projeto
+
+```text
+frontend/
+├── 📂 public/ (Camada de Assets Estáticos - Estilo FHS)
+│   ├── 📂 dvirtos/
+│   │   └── 📂 usr/
+│   │       └── 📂 share/
+│   │           ├── 📂 icons/
+│   │           │   ├── 📂 dvirtos-cursors/
+│   │           │   │   ├── 📂 cursors/ (left_ptr.svg, x-cursor.svg, etc.)
+│   │           │   │   └── index.theme
+│   │           │   └── 📂 dvirtos_logos/ (dvirtos-logo.svg)
+│   │           └── 📂 themes/
+│   │               └── 📂 dvirtos-default/ (cursor.css, window.css)
+│   ├── 📂 icons/
+│   │   └── 📂 os/ (biglinux.svg, debian.svg, linuxmint.svg)
+│   ├── .htaccess
+│   └── logo-dognew-white-gold.svg
+│
+├── 📂 src/ (Código Fonte do Sistema & Lógica)
+│   ├── 📂 assets/
+│   │   ├── 📂 fonts/ (eightbit-atari-90.ttf)
+│   │   └── react.svg
+│   │
+│   ├── 📂 components/
+│   │   ├── 📂 boot/ (Camada 1: Sequência de Boot - BIOS, GRUB, Login)
+│   │   │   ├── 📂 bios/ (BiosSetup.tsx, ExitModal.tsx)
+│   │   │   ├── 📂 grub/ (GrubBackground.tsx, GrubScreen.tsx)
+│   │   │   ├── BiosScreen.tsx
+│   │   │   ├── BootMenu.tsx
+│   │   │   └── LoginScreen.tsx
+│   │   │
+│   │   ├── 📂 kernel/ (Camadas 0-3: O Motor do Sistema)
+│   │   │   ├── SessionManager.tsx
+│   │   │   ├── WindowManager.tsx
+│   │   │   └── XServer.tsx
+│   │   │
+│   │   ├── 📂 system/ (D-VirtUI Toolkit: Bibliotecas & Compartilhados)
+│   │   │   ├── 📂 Window/
+│   │   │   │   └── Window.tsx
+│   │   │   ├── 📂 Controls/ (Futuro: SysButton.tsx, SysInput.tsx)
+│   │   │   ├── 📂 Admin/ (Ferramentas de Backdoor & Inspeção)
+│   │   │   │   ├── AdminShell.tsx
+│   │   │   │   └── SessionInspector.tsx
+│   │   │   └── 📂 Shared/ (BootTimer.tsx)
+│   │   │
+│   │   ├── 📂 shell/ (Camada 4: Ambiente de Desktop)
+│   │   │   ├── 📂 taskbar/
+│   │   │   │   └── 📂 applets/ (Bateria, Relógio, Rede, Volume)
+│   │   │   ├── 📂 desktop/ (DesktopIcon.tsx)
+│   │   │   ├── StartMenu.tsx
+│   │   │   └── DesktopShell.tsx
+│   │   │
+│   │   └── 📂 apps/ (Camada 5: Espaço do Usuário / Binários Virtuais)
+│   │       ├── 📂 Terminal/ (TerminalTest.tsx)
+│   │       ├── 📂 Settings/ (DesktopSettings.tsx)
+│   │       └── 📂 Welcome/ (WelcomeApp.tsx)
+│   │
+│   ├── 📂 context/ (Estado Global do Sistema)
+│   │   └── SessionContext.tsx
+│   │
+│   ├── 📂 hooks/ (Abstrações de Hardware & Interação)
+│   │   ├── useAdminKeys.ts
+│   │   ├── useHardware.ts
+│   │   └── useWindowInteractions.ts
+│   │
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
+│
+└── 📂 dist/ (Build Otimizada para Produção)
+```
+
+### 🧩 Matriz de Responsabilidade das Camadas do Sistema
+
+| Camada | Componente | Responsabilidade |
+| :--- | :--- | :--- |
+| **0** | SessionManager | Orquestração do estado global, simulação de hardware e persistência. |
+| **1** | XServer | Simulação do servidor de exibição, mascaramento de entrada e canvas pontilhado (stippled). |
+| **3** | WindowManager | Gerenciamento do ciclo de vida das janelas, empilhamento (z-index) e geometria. |
+| **4** | DesktopShell | Ambiente do shell da UI, Barra de Tarefas, Menu Iniciar e Grade do Desktop. |
+| **5** | UserSpace | Aplicações virtuais finais (Terminal, Configurações, Welcome App). |
