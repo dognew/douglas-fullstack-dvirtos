@@ -1,4 +1,4 @@
-import { Window } from '../Window';
+import { Window } from '../../system/window/Window';
 
 /**
  * TerminalTest Component

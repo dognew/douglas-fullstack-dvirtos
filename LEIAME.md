@@ -83,74 +83,121 @@ O D-VirtOS segue uma arquitetura estrita baseada em camadas, espelhando a separa
 
 ```text
 frontend/
+├── 🔑 .env.development           # Variáveis de ambiente (Desenvolvimento)
+├── 🔑 .env.production            # Variáveis de ambiente (Produção)
+├── 📜 .gitignore                 # Regras de exclusão do Git
+├── 📜 eslint.config.js           # Configuração de linting e qualidade de código
+├── 📜 index.html                 # Ponto de entrada HTML principal para o Vite
+├── 📜 package.json               # Dependências do projeto e scripts de ciclo de vida
+├── 📜 package-lock.json          # Árvore de dependências determinística (lock)
+├── 📜 postcss.config.js          # Processamento PostCSS para Tailwind CSS
+├── 📜 tailwind.config.js         # Configuração do design system Tailwind CSS
+├── 📜 tsconfig.app.json          # Configuração TypeScript para a aplicação
+├── 📜 tsconfig.json              # Configuração principal do projeto TypeScript
+├── 📜 tsconfig.node.json         # Configuração TypeScript para ferramentas de build
+├── 📜 vite.config.ts             # Configuração de build e servidor do Vite
+│
 ├── 📂 public/ (Camada de Assets Estáticos - Estilo FHS)
 │   ├── 📂 dvirtos/
 │   │   └── 📂 usr/
 │   │       └── 📂 share/
 │   │           ├── 📂 icons/
-│   │           │   ├── 📂 dvirtos-cursors/
-│   │           │   │   ├── 📂 cursors/ (left_ptr.svg, x-cursor.svg, etc.)
-│   │           │   │   └── index.theme
-│   │           │   └── 📂 dvirtos_logos/ (dvirtos-logo.svg)
-│   │           └── 📂 themes/
-│   │               └── 📂 dvirtos-default/ (cursor.css, window.css)
-│   ├── 📂 icons/
-│   │   └── 📂 os/ (biglinux.svg, debian.svg, linuxmint.svg)
-│   ├── .htaccess
-│   └── logo-dognew-white-gold.svg
+│   │           │   ├── 📂 dvirtos-cursors/         # Cursores de mouse simulando X11
+│   │           │   │   ├── 📂 cursors/
+│   │           │   │   │   ├── 🖼️ left_ptr.svg
+│   │           │   │   │   ├── 🖼️ pointer.svg
+│   │           │   │   │   ├── 🖼️ size_hor.svg
+│   │           │   │   │   ├── 🖼️ size_ver.svg
+│   │           │   │   │   └── 🖼️ x-cursor.svg
+│   │           │   │   └── 📜 index.theme          # Definição do tema de cursor
+│   │           │   ├── 📂 dvirtos_logos/           # Logos oficiais do sistema
+│   │           │   │   └── 🖼️ dvirtos-logo.svg
+│   │           │   └── 📂 os/                      # Logos de SOs de terceiros para GRUB/Login
+│   │           │       ├── 🖼️ biglinux.svg
+│   │           │       ├── 🖼️ debian.svg
+│   │           │       └── 🖼️ linuxmint.svg
+│   │           └── 📂 themes/                      # Temas CSS globais do sistema
+│   │               └── 📂 dvirtos-default/
+│   │                   ├── 🎨 cursor.css
+│   │                   └── 🎨 window.css
+│   ├── 📜 .htaccess                                # Regras de roteamento do servidor
+│   └── 🖼️ logo-dognew-white-gold.svg               # Logo principal
 │
-├── 📂 src/ (Código Fonte do Sistema & Lógica)
+├── 📂 src/ (Código-Fonte e Lógica do Sistema)
+│   ├── 📂 apps/ (Camada 5: Espaço do Usuário / Binários Virtuais)
+│   │   ├── 📂 terminal/
+│   │   │   └── ⚛️  TerminalTest.tsx                # Exemplo de aplicação de terminal
+│   │   ├── 📂 settings/
+│   │   │   └── ⚛️ DesktopSettings.tsx              # Configurações e Customização do Desktop
+│   │   └── 📂 welcome/
+│   │       └── ⚛️ WelcomeApp.tsx                   # Manifesto do Desenvolvedor / App de Boas-vindas
+│   │
 │   ├── 📂 assets/
-│   │   ├── 📂 fonts/ (eightbit-atari-90.ttf)
-│   │   └── react.svg
+│   │   ├── 📂 fonts/                                # Arquivos de fontes locais (Atari, Ubuntu)
+│   │   │   └── 🆎 eightbit-atari-90.ttf
+│   │   └── 🖼️ react.svg
 │   │
-│   ├── 📂 components/
-│   │   ├── 📂 boot/ (Camada 1: Sequência de Boot - BIOS, GRUB, Login)
-│   │   │   ├── 📂 bios/ (BiosSetup.tsx, ExitModal.tsx)
-│   │   │   ├── 📂 grub/ (GrubBackground.tsx, GrubScreen.tsx)
-│   │   │   ├── BiosScreen.tsx
-│   │   │   ├── BootMenu.tsx
-│   │   │   └── LoginScreen.tsx
-│   │   │
-│   │   ├── 📂 kernel/ (Camadas 0-3: O Motor do Sistema)
-│   │   │   ├── SessionManager.tsx
-│   │   │   ├── WindowManager.tsx
-│   │   │   └── XServer.tsx
-│   │   │
-│   │   ├── 📂 system/ (D-VirtUI Toolkit: Bibliotecas & Compartilhados)
-│   │   │   ├── 📂 Window/
-│   │   │   │   └── Window.tsx
-│   │   │   ├── 📂 Controls/ (Futuro: SysButton.tsx, SysInput.tsx)
-│   │   │   ├── 📂 Admin/ (Ferramentas de Backdoor & Inspeção)
-│   │   │   │   ├── AdminShell.tsx
-│   │   │   │   └── SessionInspector.tsx
-│   │   │   └── 📂 Shared/ (BootTimer.tsx)
-│   │   │
-│   │   ├── 📂 shell/ (Camada 4: Ambiente de Desktop)
-│   │   │   ├── 📂 taskbar/
-│   │   │   │   └── 📂 applets/ (Bateria, Relógio, Rede, Volume)
-│   │   │   ├── 📂 desktop/ (DesktopIcon.tsx)
-│   │   │   ├── StartMenu.tsx
-│   │   │   └── DesktopShell.tsx
-│   │   │
-│   │   └── 📂 apps/ (Camada 5: Espaço do Usuário / Binários Virtuais)
-│   │       ├── 📂 Terminal/ (TerminalTest.tsx)
-│   │       ├── 📂 Settings/ (DesktopSettings.tsx)
-│   │       └── 📂 Welcome/ (WelcomeApp.tsx)
+│   ├── 📂 boot/ (Camada 1: Subsistema de Boot)
+│   │   ├── 📂 bios/                        # Firmware e Gerenciamento de Dispositivos
+│   │   │   ├── ⚛️ BiosScreen.tsx           # Tela de POST (Power-On Self-Test)
+│   │   │   ├── ⚛️ BiosSetup.tsx            # Configurações de Hardware (DEL)
+│   │   │   ├── ⚛️ BootError.tsx            # Erro de Dispositivo de Boot não encontrado
+│   │   │   ├── ⚛️ BootMenu.tsx             # Seleção de Dispositivo de Boot (F12)
+│   │   │   └── ⚛️ ExitModal.tsx            # Confirmação de Saída do Firmware
+│   │   ├── 📂 grub/                        # Lógica do Bootloader
+│   │   │   ├── ⚛️ GrubBackground.tsx       # Fundo Dinâmico Dourado (SVG e Filtros)
+│   │   │   └── ⚛️ GrubScreen.tsx           # Interface de Seleção de SO (Inspiração GRUB)
+│   │   ├── 📂 login/               
+│   │   │   └── ⚛️ LoginScreen.tsx          # Gerenciador de Exibição (Autenticação de Usuário)
+│   │   └── 📂 plymouth/            
+│   │       └── ⚛️ PlymouthScreen.tsx       # Tela de Splash (Animação de Carga do Kernel)
 │   │
-│   ├── 📂 context/ (Estado Global do Sistema)
-│   │   └── SessionContext.tsx
+│   ├── 📂 context/
+│   │   └── ⚙️ SessionContext.tsx           # Contexto Global do React (Barramento de Estado)
 │   │
-│   ├── 📂 hooks/ (Abstrações de Hardware & Interação)
-│   │   ├── useAdminKeys.ts
-│   │   ├── useHardware.ts
-│   │   └── useWindowInteractions.ts
+│   ├── 📂 hooks/                           # Abstrações de interação com Hardware e UI
+│   │   ├── 📜 useAdminKeys.ts              # Ouvinte global para acesso administrativo (Ctrl+Alt+S)
+│   │   ├── 📜 useHardware.ts               # Coletor de specs com fallback para BIOS/CPU/RAM
+│   │   └── 📜 useWindowInteractions.ts     # Motor unificado para arrastar, redimensionar e maximizar janelas
 │   │
-│   ├── App.tsx
-│   ├── index.css
-│   └── main.tsx
+│   ├── 📂 kernel/ (Camada 0-3: O Motor do Sistema)
+│   │   ├── ⚙️ SessionManager.tsx           # Orquestra o ciclo de vida global do sistema
+│   │   ├── ⚙️ WindowManager.tsx            # Gerenciamento de empilhamento e instâncias de janelas
+│   │   └── ⚙️ XServer.tsx                  # Servidor de exibição simulado e máscara de entrada
+│   │
+│   ├── 📂 shell/ (Camada 4: Ambiente de Interface do Usuário)
+│   │   ├── ⚛️ DesktopShell.tsx             # O Orquestrador (Pai) - Gerencia o ambiente
+│   │   ├── 📂 panel/                       # Subsistema do Painel Principal (Barra de Contêiner)
+│   │   │   ├── 📂 systray/                 # Bandeja do Sistema (Área de Notificação)
+│   │   │   │   └── 📂 applets/             # Pequenos apps de status do sistema
+│   │   │   │       ├── 🧩 BatteryApplet.tsx
+│   │   │   │       ├── 🧩 ClockApplet.tsx
+│   │   │   │       ├── 🧩 NetworkApplet.tsx
+│   │   │   │       └── 🧩 VolumeApplet.tsx
+│   │   │   ├── 📂 taskbar/                 # Área da lista de janelas abertas
+│   │   │   └── ⚛️ StartMenu.tsx            # Lançador de Aplicativos (Menu Iniciar)
+│   │   └── 📂 workspace/                   # Subsistema da Área de Trabalho (Ícones)
+│   │       └── 🧩 DesktopIcon.tsx
+│   │
+│   ├── 📂 system/ (D-VirtUI Toolkit: Bibliotecas do Sistema)
+│   │   ├── 📂 admin/                       # Backdoor Administrativo e Depuração
+│   │   │   ├── 📂 painel/                  # Componentes de interface
+│   │   │   │   └── ⚙️ SessionInspector.tsx # Monitor do barramento do Kernel e controle de camadas
+│   │   │   └── ⚙️ AdminShell.tsx           # UI Admin Principal com Spawner de Binários (/usr/bin)
+│   │   ├── 📂 controls/                    # Controles de UI Padrão (DLLs do Toolkit)
+│   │   │   └── (Futuro: 🧩 SysButton.tsx, 🧩 SysInput.tsx)
+│   │   ├── 📂 utils/                       # Utilitários comuns do sistema
+│   │   │   └── ⚙️ BootTimer.tsx            # Lógica de contagem regressiva para sequências de auto-boot
+│   │   └── 📂 window/
+│   │       └── 🧩 Window.tsx               # Decoração e lógica base de janelas
+│   │
+│   ├── 🎨 App.css                          # Estilos principais da aplicação
+│   ├── ⚛️ App.tsx                          # Componente Raiz do Sistema
+│   ├── 🎨 index.css                        # Tailwind global e CSS Base
+│   ├── 📜 main.tsx                         # Ponto de entrada React DOM
+│   └── 📜 vite-env.d.ts                    # Definições de tipo de ambiente do Vite
 │
-└── 📂 dist/ (Build Otimizada para Produção)
+└── 📂 dist/ (Build Final Otimizado para Deploy)    # Saída final para implantação em host remoto
 ```
 
 ### 🧩 Matriz de Responsabilidade das Camadas do Sistema

@@ -1,5 +1,5 @@
-import { Window } from '../Window';
-import { useSession } from '../../../../context/SessionContext';
+import { Window } from '../../system/window/Window';
+import { useSession } from '../../context/SessionContext';
 
 /**
  * Layer 5: Desktop Settings App

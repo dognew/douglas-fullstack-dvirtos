@@ -1,15 +1,15 @@
 import { type ReactNode, useState, useEffect, type MouseEvent } from 'react';
-import { useSession } from '../../../context/SessionContext';
+import { useSession } from '../context/SessionContext';
 
 /* Applet Imports */
-import { ClockApplet } from './shell/applets/ClockApplet';
-import { NetworkApplet } from './shell/applets/NetworkApplet';
-import { VolumeApplet } from './shell/applets/VolumeApplet';
-import { BatteryApplet } from './shell/applets/BatteryApplet';
+import { ClockApplet } from './panel/systray/applets/ClockApplet';
+import { NetworkApplet } from './panel/systray/applets/NetworkApplet';
+import { VolumeApplet } from './panel/systray/applets/VolumeApplet';
+import { BatteryApplet } from './panel/systray/applets/BatteryApplet';
 
 /* UI Imports */
-import { DesktopIcon, type DesktopIconConfig } from './shell/DesktopIcon';
-import { StartMenu } from './shell/StartMenu';
+import { DesktopIcon, type DesktopIconConfig } from './workspace/DesktopIcon';
+import { StartMenu } from './panel/StartMenu';
 
 interface DesktopShellProps {
   children?: ReactNode;

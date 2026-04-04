@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import BootTimer from '../shared/BootTimer';
+import BootTimer from '../../system/utils/BootTimer';
 
 export default function BiosScreen({ onComplete, onEnterSetup, onEnterBootMenu, specs }: {
   onComplete: () => void,

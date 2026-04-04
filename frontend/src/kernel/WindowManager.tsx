@@ -1,8 +1,8 @@
 import { useState, type ReactNode, useEffect } from 'react';
-import { useSession } from '../../../context/SessionContext';
-import { TerminalTest } from './apps/TerminalTest';
-import { DesktopSettings } from './apps/DesktopSettings';
-import { WelcomeApp } from './apps/WelcomeApp';
+import { useSession } from '../context/SessionContext';
+import { TerminalTest } from '../apps/terminal/TerminalTest';
+import { DesktopSettings } from '../apps/settings/DesktopSettings';
+import { WelcomeApp } from '../apps/welcome/WelcomeApp';
 
 interface WindowInstance {
   id: string;

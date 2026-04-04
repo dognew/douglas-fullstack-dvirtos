@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SessionInspector } from './views/SessionInspector';
+import { SessionInspector } from './painel/SessionInspector';
 
 interface AdminShellProps {
   isOpen: boolean;

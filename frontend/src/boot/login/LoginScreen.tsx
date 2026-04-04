@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import BootTimer from '../shared/BootTimer';
+import BootTimer from '../../system/utils/BootTimer';
 import { useSession } from '../../context/SessionContext';
 
 /**

@@ -175,16 +175,16 @@ button:focus-visible {
 }
 
 .bi-debian {
-  mask-image: url('/icons/os/debian.svg');
-  -webkit-mask-image: url('/icons/os/debian.svg');
+  mask-image: url('dvirtos/usr/share/icons/os/debian.svg');
+  -webkit-mask-image: url('/dvirtos/usr/share/icons/os/debian.svg');
 }
 
 .bi-linuxmint {
-  mask-image: url('/icons/os/linuxmint.svg');
-  -webkit-mask-image: url('/icons/os/linuxmint.svg');
+  mask-image: url('dvirtos/usr/share/icons/os/linuxmint.svg');
+  -webkit-mask-image: url('/dvirtos/usr/share/icons/os/linuxmint.svg');
 }
 
 .bi-biglinux {
-  mask-image: url('/icons/os/biglinux.svg');
-  -webkit-mask-image: url('/icons/os/biglinux.svg');
+  mask-image: url('dvirtos/usr/share/icons/os/biglinux.svg');
+  -webkit-mask-image: url('/dvirtos/usr/share/icons/os/biglinux.svg');
 }

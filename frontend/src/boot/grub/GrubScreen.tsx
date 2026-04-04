@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import GrubBackground from './GrubBackground';
-import BootTimer from '../shared/BootTimer';
+import BootTimer from '../../system/utils/BootTimer';
 
 interface GrubScreenProps {
   onSelect: (osId: string) => void;

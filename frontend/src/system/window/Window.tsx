@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect } from 'react';
-import { useWindowInteractions } from '../../../hooks/useWindowInteractions';
+import { type ReactNode, useEffect } from 'react'
+import { useWindowInteractions } from '../../hooks/useWindowInteractions';
 
 export interface WindowConfig {
   hasTitleBar?: boolean;

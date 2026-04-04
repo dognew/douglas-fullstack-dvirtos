@@ -3,25 +3,25 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // Context & Admin
 import { SessionProvider, useSession } from './context/SessionContext';
-import { AdminShell } from './components/admin/AdminShell';
+import { AdminShell } from './system/admin/AdminShell';
 import { useAdminKeys } from './hooks/useAdminKeys';
 
 // Layers (Camadas 0 e 1)
-import { SessionManager } from './components/admin/layers/SessionManager';
-import { XServer } from './components/admin/layers/XServer';
+import { SessionManager } from './kernel/SessionManager';
+import { XServer } from './kernel/XServer';
 
 // Layer 3
-import { WindowManager } from './components/admin/layers/WindowManager';
-import { DesktopShell } from './components/admin/layers/DesktopShell';
+import { WindowManager } from './kernel/WindowManager';
+import { DesktopShell } from './shell/DesktopShell';
 
 // Your Components
-import BiosScreen from './components/boot/BiosScreen';
-import BiosSetup from './components/bios/BiosSetup';
-import BootMenu from './components/boot/BootMenu';
-import BootError from './components/boot/BootError';
-import GrubScreen from './components/boot/GrubScreen';
-import PlymouthScreen from './components/boot/PlymouthScreen';
-import LoginScreen from './components/boot/LoginScreen';
+import BiosScreen from './boot/bios/BiosScreen';
+import BiosSetup from './boot/bios/BiosSetup';
+import BootMenu from './boot/bios/BootMenu';
+import BootError from './boot/bios/BootError';
+import GrubScreen from './boot/grub/GrubScreen';
+import PlymouthScreen from './boot/plymouth/PlymouthScreen';
+import LoginScreen from './boot/login/LoginScreen';
 
 function SystemBootstrap() {
   const { state, setStage, setSelectedOS, reboot } = useSession();

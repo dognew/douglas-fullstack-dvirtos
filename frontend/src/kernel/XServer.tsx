@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect } from 'react';
-import { useSession } from '../../../context/SessionContext';
+import { useSession } from '../context/SessionContext';
 
 interface XServerProps {
   children: ReactNode;
