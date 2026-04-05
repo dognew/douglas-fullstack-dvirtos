@@ -18,6 +18,7 @@ jobs:
           cd frontend
           npm install
           npm run build
+          # Copies the optimized build to the repository root for FHS compliance
           cp -r dist/* ../ 
 
       - name: 📦 Setup & Install Backend
@@ -28,7 +29,8 @@ jobs:
       - name: 🚀 Deploy via Rsync (SSH)
         uses: Burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr
+          # Active --delete flag to remove orphan files/folders on Hostgator
+          switches: -avzr --delete
           path: ./
           remote_path: ${{ secrets.SSH_REMOTE_PATH }}
           remote_host: ${{ secrets.SSH_HOST }}
