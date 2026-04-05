@@ -29,10 +29,10 @@ jobs:
       - name: 🧹✨ Physical Clean (The "No-Fail" Method)
         run: |
           # Remove Git and CI folders
-          rm -rf .git .github .ssh
+          rm -rf .git .github .ssh .gitignore
           # Remove development and source files
           rm -rf frontend/src frontend/public frontend/node_modules
-          rm -rf backend/tests backend/node_modules
+          rm -rf backend/tests backend/node_modules backend/Dockerfile backend/phpunit.xml
           # Remove configuration and docs
           rm -f docker-compose.yml Dockerfile .env.example .env.development .env.production
           rm -f README.md LEIAME.md LICENSE Makefile makefile
