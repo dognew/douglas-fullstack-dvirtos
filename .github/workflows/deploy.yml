@@ -18,12 +18,26 @@ jobs:
           cd frontend
           npm install
           npm run build
+          # Move build to root
           cp -r dist/* ../ 
 
       - name: 📦 Setup & Install Backend
         run: |
           cd backend
           composer install --no-dev --optimize-autoloader
+
+      - name: 🧹✨ Physical Clean (The "No-Fail" Method)
+        run: |
+          # Remove Git and CI folders
+          rm -rf .git .github .ssh
+          # Remove development and source files
+          rm -rf frontend/src frontend/public frontend/node_modules
+          rm -rf backend/tests backend/node_modules
+          # Remove configuration and docs
+          rm -f docker-compose.yml Dockerfile .env.example .env.development .env.production
+          rm -f README.md LEIAME.md LICENSE Makefile makefile
+          # Remove build artifacts that are now in root
+          rm -rf frontend/dist
 
       - name: 🚀 Deploy via Rsync (SSH)
         uses: Burnett01/rsync-deployments@7.0.1
@@ -35,21 +49,7 @@ jobs:
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USER }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # Removed single quotes and ensured correct spacing for rsync patterns
+          # Keeping only the absolute essential exclusion to protect the Hostgator .env
           args: >
-            --exclude=.git*
-            --exclude=.github*
-            --exclude=.ssh/
+            --exclude=**/.env
             --exclude=cgi-bin/
-            --exclude=node_modules/
-            --exclude=frontend/src/
-            --exclude=frontend/public/
-            --exclude=backend/tests/
-            --exclude=.env*
-            --exclude=docker-compose.yml
-            --exclude=Dockerfile
-            --exclude=README.md
-            --exclude=LEIAME.md
-            --exclude=LICENSE
-            --exclude=Makefile
-            --exclude=makefile
