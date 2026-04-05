@@ -18,7 +18,6 @@ jobs:
           cd frontend
           npm install
           npm run build
-          # Copies the optimized build to the repository root for FHS compliance
           cp -r dist/* ../ 
 
       - name: 📦 Setup & Install Backend
@@ -29,7 +28,6 @@ jobs:
       - name: 🚀 Deploy via Rsync (SSH)
         uses: Burnett01/rsync-deployments@7.0.1
         with:
-          # Active --delete flag to remove orphan files/folders on Hostgator
           switches: -avzr --delete
           path: ./
           remote_path: ${{ secrets.SSH_REMOTE_PATH }}
@@ -37,20 +35,21 @@ jobs:
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USER }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Removed single quotes and ensured correct spacing for rsync patterns
           args: >
-            --exclude='.git*'
-            --exclude='.github*'
-            --exclude='.ssh/'
-            --exclude='cgi-bin/'
-            --exclude='**/node_modules/**'
-            --exclude='frontend/src/**'
-            --exclude='frontend/public/**'
-            --exclude='backend/tests/**'
-            --exclude='**/.env'
-            --exclude='docker-compose.yml'
-            --exclude='Dockerfile'
-            --exclude='README.md'
-            --exclude='LEIAME.md'
-            --exclude='LICENSE'
-            --exclude='Makefile'
-            --exclude='makefile'
+            --exclude=.git*
+            --exclude=.github*
+            --exclude=.ssh/
+            --exclude=cgi-bin/
+            --exclude=node_modules/
+            --exclude=frontend/src/
+            --exclude=frontend/public/
+            --exclude=backend/tests/
+            --exclude=.env*
+            --exclude=docker-compose.yml
+            --exclude=Dockerfile
+            --exclude=README.md
+            --exclude=LEIAME.md
+            --exclude=LICENSE
+            --exclude=Makefile
+            --exclude=makefile
