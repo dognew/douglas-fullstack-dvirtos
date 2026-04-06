@@ -183,7 +183,8 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
           Layer: z-[900] (Always above apps/windows)
       */}
       <footer
-        onContextMenu={(e) => e.preventDefault()} /* Block on taskbar too */
+        
+        onContextMenu={(e) => e.stopPropagation()}
         className="h-12 w-full bg-[#1A1A1A]/90 backdrop-blur-md border-t border-white/5 flex items-center justify-between px-2 z-[900]"
       >
         <div className="flex items-center gap-2">

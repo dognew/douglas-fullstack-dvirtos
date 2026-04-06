@@ -19,6 +19,7 @@ export const StartMenu = ({ isOpen, onClose, onSpawnApp }: StartMenuProps) => {
 
   return (
     <div 
+      onContextMenu={(e) => e.stopPropagation()}
       className="absolute bottom-14 left-2 w-[520px] h-[450px] bg-[#1A1A1A]/95 backdrop-blur-xl 
                  border border-white/10 rounded-lg shadow-2xl z-[950] flex overflow-hidden 
                  animate-in slide-in-from-bottom-4 duration-200"
