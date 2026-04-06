@@ -1,0 +1,7 @@
+{
+  "id": "sys-info",
+  "name": "System Info",
+  "icon": "bi-info-square-fill",
+  "exec": "sysinfo",
+  "description": "System Specifications"
+}

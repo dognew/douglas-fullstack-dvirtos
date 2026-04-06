@@ -77,24 +77,6 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
   /* Desktop Icons Configuration Object */
   const desktopIcons: DesktopIconConfig[] = [
     {
-      id: 'term-launcher',
-      label: 'Terminal',
-      icon: 'bi-terminal-fill',
-      action: () => spawnApp('terminal')
-    },
-    {
-      id: 'sys-info',
-      label: 'System Info',
-      icon: 'bi-info-square-fill',
-      action: () => console.log('System Info Triggered')
-    },
-    {
-      id: 'settings-launcher',
-      label: 'Desktop Settings',
-      icon: 'bi-gear-fill',
-      action: () => spawnApp('settings')
-    },
-    {
       id: 'sys-logoff',
       label: 'Logoff',
       icon: 'bi-box-arrow-left',
@@ -177,6 +159,20 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
         onContextMenu={handleContextMenu}
         className="flex-1 relative z-10 p-6 flex flex-col flex-wrap gap-4 content-start"
       >
+        {/* Dynamic Apps from Kernel Discovery (Meta 1) */}
+        {state.installedApps && state.installedApps.map(app => (
+          <DesktopIcon 
+            key={app.id} 
+            config={{
+              id: app.id,
+              label: app.name,
+              icon: app.icon,
+              action: () => spawnApp(app.exec) /* Triggers your standard window event */
+            }} 
+          />
+        ))}
+
+        {/* Existing Static System Icons */}
         {desktopIcons.map(icon => (
           <DesktopIcon key={icon.id} config={icon} />
         ))}

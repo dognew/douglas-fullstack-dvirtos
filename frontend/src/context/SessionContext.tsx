@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode, useCallback } from 'react';
 import { useHardware } from '../hooks/useHardware';
+import { type AppManifest } from '../kernel/AppRegistry';
 
 /** 
  * Define the possible stages of the system boot process 
@@ -36,6 +37,7 @@ interface SessionState {
   };
   /* Support for dynamic wallpapers */
   wallpaper: string | 'default';
+  installedApps: AppManifest[];
 }
 
 interface SessionContextType {
@@ -48,6 +50,7 @@ interface SessionContextType {
   setLayerStatus: (layerId: keyof SessionState['layers'], status: LayerStatus) => void;
   reboot: () => void;
   logoff: () => void;
+  setInstalledApps: (apps: AppManifest[]) => void;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
@@ -62,6 +65,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [skipIntro, setSkipIntroState] = useState(false);
   const [sessionRaw, setSessionRaw] = useState<Record<string, string | null>>({});
+
+  const [installedApps, setInstalledAppsState] = useState<AppManifest[]>([]);
 
   /* State for system layers */
   const [layers, setLayers] = useState<SessionState['layers']>({
@@ -160,7 +165,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
         skipIntro 
       },
       layers,
-      wallpaper
+      wallpaper,
+      installedApps
     },
     setStage: setStageState,
     setSelectedOS: setSelectedOSState,
@@ -169,7 +175,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     setSkipIntro,
     setLayerStatus,
     reboot,
-    logoff
+    logoff,
+    setInstalledApps: setInstalledAppsState
   };
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

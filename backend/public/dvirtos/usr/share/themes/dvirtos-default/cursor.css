@@ -1,0 +1,28 @@
+/**
+ * D-VirtOS Cursor Library
+ * Path: /usr/share/themes/dvirtos-default/cursor.css
+ */
+
+.cursor-x11-xcursor {
+  cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/x-cursor.svg") 16 16, auto;
+}
+
+.cursor-x11-left-ptr {
+  cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/left_ptr.svg") 2 2, auto;
+}
+
+.cursor-x11-pointer {
+  cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/pointer.svg") 9 2, pointer;
+}
+
+.cursor-x11-size-hor {
+  cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/size_hor.svg") 16 16, ew-resize;
+}
+
+.cursor-x11-size-ver {
+  cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/size_ver.svg") 16 16, ns-resize;
+}
+
+button:hover{
+    cursor: url("/dvirtos/usr/share/icons/dvirtos-cursors/cursors/pointer.svg") 9 2, pointer;
+}

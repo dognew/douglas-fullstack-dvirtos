@@ -12,7 +12,8 @@ interface StartMenuProps {
  * Layer: z-[950] (System Menu Layer, above Taskbar)
  */
 export const StartMenu = ({ isOpen, onClose, onSpawnApp }: StartMenuProps) => {
-  const { logoff, reboot } = useSession();
+  const { state, logoff, reboot } = useSession();
+  const { installedApps } = state;
 
   if (!isOpen) return null;
 
@@ -76,32 +77,36 @@ export const StartMenu = ({ isOpen, onClose, onSpawnApp }: StartMenuProps) => {
               ))}
            </div>
 
-           {/* App Grid/List */}
+           {/* App Grid/List: Dynamic from Kernel Discovery */}
            <div className="flex-1 p-2 overflow-y-auto custom-scrollbar flex flex-col gap-1">
-              <button 
-                onClick={() => { onSpawnApp('terminal'); onClose(); }}
-                className="flex items-center gap-3 p-2 rounded hover:bg-white/5 group transition-all text-left cursor-x11-pointer"
-              >
-                 <div className="w-8 h-8 bg-[#E4C844]/10 rounded flex items-center justify-center border border-[#E4C844]/20">
-                    <i className="bi bi-terminal-fill text-[#FCF87C]"></i>
-                 </div>
-                 <div className="flex flex-col">
-                    <span className="text-[11px] text-white/80 group-hover:text-[#FCF87C]">Terminal</span>
-                    <span className="text-[9px] text-white/30 lowercase">System Command Line</span>
-                 </div>
-              </button>
-
-              {['File Manager', 'System Monitor', 'Calculator', 'Text Editor', 'Web Browser'].map(app => (
-                <button key={app} className="flex items-center gap-3 p-2 rounded opacity-50 grayscale hover:grayscale-0 hover:bg-white/5 transition-all text-left cursor-x11-pointer">
-                   <div className="w-8 h-8 bg-white/5 rounded flex items-center justify-center border border-white/10">
-                      <i className="bi bi-app text-white/40"></i>
+              {installedApps && installedApps.map(app => (
+                <button 
+                  key={app.id}
+                  onClick={() => { onSpawnApp(app.exec); onClose(); }}
+                  className="flex items-center gap-3 p-2 rounded hover:bg-white/5 group transition-all text-left cursor-x11-pointer"
+                >
+                   <div className="w-8 h-8 bg-[#E4C844]/10 rounded flex items-center justify-center border border-[#E4C844]/20 overflow-hidden">
+                      {app.icon.includes('/') || app.icon.includes('.') ? (
+                        <img src={app.icon} alt={app.name} className="w-5 h-5 object-contain" />
+                      ) : (
+                        <i className={`bi ${app.icon} text-[#FCF87C]`}></i>
+                      )}
                    </div>
                    <div className="flex flex-col">
-                      <span className="text-[11px] text-white/60">{app}</span>
-                      <span className="text-[9px] text-white/20 uppercase tracking-tighter italic">Application Symbol</span>
+                      <span className="text-[11px] text-white/80 group-hover:text-[#FCF87C]">{app.name}</span>
+                      <span className="text-[9px] text-white/30 lowercase truncate max-w-[200px]">
+                        {app.description || 'System Application'}
+                      </span>
                    </div>
                 </button>
               ))}
+
+              {/* Placeholder for future non-installed mockups (optional) */}
+              {(!installedApps || installedApps.length === 0) && (
+                <div className="p-4 text-center text-[10px] text-white/20 italic">
+                  No applications found in /usr/share/applications
+                </div>
+              )}
            </div>
         </div>
       </section>

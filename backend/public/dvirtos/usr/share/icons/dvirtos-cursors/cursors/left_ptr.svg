@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   sodipodi:docname="left_ptr.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     inkscape:zoom="19.622213"
+     inkscape:cx="17.964335"
+     inkscape:cy="18.958106"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g3"
+       transform="matrix(2.000025,0,0,2.000025,-0.39526891,-1.0674744)">
+      <path
+         style="fill:#1a1a1a;stroke:#ffffff;stroke-width:0.357077;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:stroke fill markers"
+         d="M 4.1837821,11.215097 7.4171704,9.8911907 6.5432465,12.36722 Z"
+         id="path3"
+         sodipodi:nodetypes="cccc"
+         inkscape:transform-center-x="-3.2326779"
+         inkscape:transform-center-y="0.59511083" />
+      <path
+         style="fill:#1a1a1a;stroke:#ffffff;stroke-width:0.714153;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:stroke fill markers"
+         d="M 2.6590565,10.773724 8.0480487,8.5672119 5.9603432,11.15244 Z"
+         id="path2"
+         sodipodi:nodetypes="cccc"
+         inkscape:transform-center-x="-2.7342838"
+         inkscape:transform-center-y="-1.0088265" />
+      <path
+         id="rect2"
+         style="fill:#1a1a1a;stroke:#ffffff;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+         d="M 1.4779168,1.8346554 9.0713512,8.0520986 1.4779168,11.211783 Z"
+         sodipodi:nodetypes="cccc" />
+    </g>
+    <path
+       id="hotspot"
+       d="M 3,2 V 3 H 2 V 2 Z"
+       display="none"
+       fill="#333333"
+       stroke-width="1.07568" />
+  </g>
+</svg>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   sodipodi:docname="pointer.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     inkscape:zoom="19.622213"
+     inkscape:cx="13.479621"
+     inkscape:cy="14.320505"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect1"
+       style="fill:#1a1a1a;stroke:#ffffff;stroke-width:1.35628;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none;paint-order:stroke fill markers"
+       d="M 10.054338,2.340507 C 8.8528274,2.233129 7.3862823,3.5323127 7.5801946,4.9815353 l 1.6307992,12.1879357 -0.008,-0.0186 c 0,0 -1.851766,-1.966923 -3.2396968,-2.492686 -1.2646834,-0.479074 -3.328286,-0.373256 -3.7430022,1.464883 3.9790362,3.049561 4.2407161,8.002286 7.5654728,10.93232 0.5128224,0.451938 1.0548144,0.945685 1.8195604,0.945685 3.492742,-0.402653 6.83085,-1.167276 10.192009,0.225117 0.925561,0.383422 1.861745,-0.729052 1.931103,-1.78276 l 0.805287,-12.240913 c 0.06937,-1.053592 -0.679777,-1.955253 -1.679452,-2.021054 -0.667228,-0.04392 -1.271759,0.295622 -1.621172,0.839726 l 0.0054,-0.111256 c 0.05219,-1.054658 -0.819231,-1.948926 -1.955055,-2.00524 -0.781866,-0.03876 -1.478809,0.330964 -1.854281,0.908599 0.07171,-1.214825 -0.750018,-2.2466404 -1.843622,-2.3126052 L 15.33919,9.4874269 C 14.481772,9.4357234 13.720395,9.9915353 13.394842,10.819876 L 11.764043,4.9815353 C 11.370687,3.5733025 11.098884,2.4338573 10.054338,2.340507 Z"
+       sodipodi:nodetypes="asccscassccsccsccccsa" />
+    <path
+       id="hotspot"
+       d="M 9.9999998,2 V 3 H 9 V 2 Z"
+       display="none"
+       fill="#333333"
+       stroke-width="1.07568" />
+  </g>
+</svg>

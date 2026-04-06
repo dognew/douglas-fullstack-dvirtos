@@ -1,0 +1,7 @@
+{
+  "id": "settings-launcher",
+  "name": "Desktop Settings",
+  "icon": "bi-gear-fill",
+  "exec": "settings",
+  "description": "Customize your Desktop Environment"
+}

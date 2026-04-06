@@ -1,0 +1,7 @@
+{
+  "id": "term-launcher",
+  "name": "Terminal",
+  "icon": "bi-terminal-fill",
+  "exec": "terminal",
+  "description": "System Terminal Emulator"
+}

@@ -1,0 +1,6 @@
+[Icon Theme]
+Name=D-VirtOS Standard
+Name[pt_BR]=D-VirtOS Padrão
+Comment=Official D-VirtOS X11 Cursor Theme
+Comment[pt_BR]=Tema de Cursor Oficial do D-VirtOS
+Inherits=core

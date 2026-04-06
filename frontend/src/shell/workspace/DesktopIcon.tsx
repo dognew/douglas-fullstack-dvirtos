@@ -23,9 +23,17 @@ export const DesktopIcon = ({ config }: { config: DesktopIconConfig }) => {
              hover:bg-white/5 transition-all group cursor-x11-pointer /* Cursor de interação X11 */
              active:scale-95 border border-transparent hover:border-white/10 rounded-lg"
         >
-            {/* Icon Container */}
+            {/* Icon Container: Supports both Bootstrap classes and SVG paths */}
             <div className="w-12 h-12 flex items-center justify-center transition-all mb-1">
-                <i className={`bi ${config.icon} text-4xl text-[#FCF87C]/60 group-hover:text-[#FCF87C] group-hover:drop-shadow-[0_0_8px_rgba(252,248,124,0.3)] transition-all`}></i>
+                {config.icon.includes('/') || config.icon.includes('.') ? (
+                    <img 
+                        src={config.icon} 
+                        alt={config.label} 
+                        className="w-10 h-10 drop-shadow-md group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all pointer-events-none" 
+                    />
+                ) : (
+                    <i className={`bi ${config.icon} text-4xl text-[#FCF87C]/60 group-hover:text-[#FCF87C] group-hover:drop-shadow-[0_0_8px_rgba(252,248,124,0.3)] transition-all`}></i>
+                )}
             </div>
 
             {/* 

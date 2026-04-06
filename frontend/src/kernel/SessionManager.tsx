@@ -10,7 +10,7 @@ interface SessionManagerProps {
  * Responsibility: Orchestrates the session lifecycle and layer visibility/existence.
  */
 export const SessionManager = ({ children }: SessionManagerProps) => {
-  const { state, logoff } = useSession();
+  const { state, logoff, setInstalledApps } = useSession();
   const { isAuthenticated, visitorType } = state.auth;
   
   /* Get layers state from context - default to 'active' if not yet defined */
@@ -26,6 +26,29 @@ export const SessionManager = ({ children }: SessionManagerProps) => {
       logoff();
     }
   }, [state.boot.stage, visitorType, isAuthenticated, logoff]);
+
+  useEffect(() => {
+    const runDiscovery = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const listResponse = await fetch(`${apiUrl}/system/applications`);
+        const files: string[] = await listResponse.json();
+
+        const manifests = await Promise.all(
+          files.map(async (file) => {
+            const res = await fetch(`/dvirtos/usr/share/applications/${file}`);
+            return res.json();
+          })
+        );
+
+        setInstalledApps(manifests);
+      } catch (error) {
+        console.error("Kernel Panic: Discovery failed", error);
+      }
+    };
+
+    runDiscovery();
+  }, []);
 
   return (
     <div className="session-root w-full h-screen bg-transparent overflow-hidden relative">
