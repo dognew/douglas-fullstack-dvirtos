@@ -39,15 +39,15 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
   }, []);
 
   useEffect(() => {
-    // Only trigger if the layer is active to avoid spawning on hidden layers
     if (status === 'active') {
       const timer = setTimeout(() => {
-        spawnApp('welcome'); // Triggers the signal for WindowManager
+        /* Refined: Using the correct binary name discovered by Kernel */
+        spawnApp('WelcomeApp');
       }, 2000);
 
-      return () => clearTimeout(timer); // Cleanup if layer is unmounted or terminated
+      return () => clearTimeout(timer);
     }
-  }, [status]); // Listen to layer status changes
+  }, [status]);
 
   /* 
      REFINED: Context Menu Hijacker 
@@ -161,14 +161,14 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
       >
         {/* Dynamic Apps from Kernel Discovery (Meta 1) */}
         {state.installedApps && state.installedApps.map(app => (
-          <DesktopIcon 
-            key={app.id} 
+          <DesktopIcon
+            key={app.id}
             config={{
               id: app.id,
               label: app.name,
               icon: app.icon,
               action: () => spawnApp(app.exec) /* Triggers your standard window event */
-            }} 
+            }}
           />
         ))}
 
@@ -183,7 +183,7 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
           Layer: z-[900] (Always above apps/windows)
       */}
       <footer
-        
+
         onContextMenu={(e) => e.stopPropagation()}
         className="h-12 w-full bg-[#1A1A1A]/90 backdrop-blur-md border-t border-white/5 flex items-center justify-between px-2 z-[900]"
       >

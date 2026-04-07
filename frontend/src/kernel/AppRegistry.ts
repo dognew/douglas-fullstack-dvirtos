@@ -18,13 +18,22 @@ export interface AppManifest {
 }
 
 export const getAppComponent = (execName: string) => {
+  // DEBUG: Check what binaries the Kernel is trying to execute
+  console.log(`[Kernel Registry] Attempting to spawn binary: ${execName}`);
+  
+  // DEBUG: List all files mapped by Vite in the virtual file system
+  console.log(`[Kernel Registry] Available modules:`, Object.keys(appModules));
+
   // Find the component path that matches the 'exec' name in JSON
   const path = Object.keys(appModules).find(p => p.includes(`${execName}.tsx`));
   
   if (!path) {
-    console.error(`Kernel Error: Binary '${execName}' not found in /src/apps/`);
+    console.error(`[Kernel Error] Binary '${execName}' not found in /src/apps/`);
     return null;
   }
+
+  // DEBUG: Confirm which file path was selected for the component
+  console.log(`[Kernel Registry] Binary located at: ${path}`);
 
   // Returns the component as a React Lazy component
   return React.lazy(appModules[path] as () => Promise<{ default: React.ComponentType<any> }>);

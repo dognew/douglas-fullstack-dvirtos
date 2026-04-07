@@ -1,21 +1,26 @@
 import { useState, type ReactNode, useEffect } from 'react';
 import { useSession } from '../context/SessionContext';
-import { TerminalTest } from '../apps/terminal/TerminalTest';
-import { DesktopSettings } from '../apps/settings/DesktopSettings';
-import { WelcomeApp } from '../apps/welcome/WelcomeApp';
+import { getAppComponent } from './AppRegistry';
+import React, { Suspense } from 'react';
 
 interface WindowInstance {
   id: string;
-  type: 'terminal' | 'settings' | 'welcome';
+  type: string; 
   isMinimized: boolean;
   title: string;
-  zIndex: number; 
+  zIndex: number;
+  Component?: React.LazyExoticComponent<React.ComponentType<any>>; // Refined: Explicit component type
 }
 
 interface WindowManagerProps {
   children: ReactNode;
 }
 
+/**
+ * Layer 3: Window Manager
+ * Responsibility: Manages window lifecycle, stacking order, and dynamic component spawning.
+ * Refined: Migration to Dynamic AppRegistry (Meta 1) with strict TS prop handling.
+ */
 export const WindowManager = ({ children }: WindowManagerProps) => {
   const { state } = useSession();
   const status = state.layers?.windowManager || 'active';
@@ -23,11 +28,28 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
   const [windows, setWindows] = useState<WindowInstance[]>([]);
   const [windowStack, setWindowStack] = useState<string[]>([]);
 
-  const spawnWelcome = () => {
-    const newId = `welcome-${Date.now()}`;
+  /**
+   * Unified Spawn Engine
+   * Dynamically resolves components via AppRegistry.
+   */
+  const spawnApp = (execName: string) => {
+    const Component = getAppComponent(execName);
+    
+    if (!Component) {
+      console.error(`[WindowManager] Execution failed: ${execName} not found.`);
+      return;
+    }
+
+    const newId = `${execName}-${Date.now()}`;
+    const title = execName.charAt(0).toUpperCase() + execName.slice(1);
+
     setWindows(prev => [...prev, { 
-      id: newId, type: 'welcome', isMinimized: false, title: 'Welcome',
-      zIndex: 100 + windowStack.length
+      id: newId, 
+      type: execName, 
+      isMinimized: false, 
+      title: title,
+      zIndex: 100 + windowStack.length,
+      Component: Component 
     }]);
     setWindowStack(prev => [...prev, newId]);
   };
@@ -52,31 +74,10 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     ));
   };
 
-  const spawnTerminal = () => {
-    const newId = `term-${Date.now()}`;
-    setWindows(prev => [...prev, { 
-      id: newId, type: 'terminal', isMinimized: false, title: 'System Terminal',
-      zIndex: 100 + windowStack.length
-    }]);
-    setWindowStack(prev => [...prev, newId]);
-  };
-
-  /* New: Logical Spawn for Desktop Settings */
-  const spawnSettings = () => {
-    const newId = `settings-${Date.now()}`;
-    setWindows(prev => [...prev, { 
-      id: newId, type: 'settings', isMinimized: false, title: 'Desktop Settings',
-      zIndex: 100 + windowStack.length
-    }]);
-    setWindowStack(prev => [...prev, newId]);
-  };
-
   useEffect(() => {
     const handleSpawnSignal = (e: Event) => {
       const type = (e as CustomEvent).detail?.type;
-      if (type === 'terminal') spawnTerminal();
-      if (type === 'settings') spawnSettings();
-      if (type === 'welcome') spawnWelcome();
+      if (type) spawnApp(type);
     };
 
     const handleToggleSignal = (e: Event) => {
@@ -117,34 +118,27 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
     >
       {state.layers?.desktopShell !== 'terminated' && children}
       
+      {/* Refined: Dynamic Window Rendering with Tag Syntax for Stability */}
       {windows.map((win) => {
         const stackIndex = windowStack.indexOf(win.id);
         const dynamicZIndex = 100 + stackIndex;
+        
+        // Use a capitalized variable so React recognizes it as a component
+        const AppComponent = win.Component;
 
         return (
           <div key={win.id} style={{ zIndex: dynamicZIndex }} className="absolute inset-0 pointer-events-none">
             <div className="pointer-events-auto contents" onMouseDown={() => bringToFront(win.id)}>
-              {win.type === 'terminal' && (
-                <TerminalTest 
-                  isMinimized={win.isMinimized}
-                  zIndex={dynamicZIndex}
-                  onClose={() => handleClose(win.id)} 
-                  onMinimize={() => handleMinimize(win.id)}
-                />
-              )}
-              {/* New: Conditional rendering for settings app */}
-              {win.type === 'settings' && (
-                <DesktopSettings 
-                  zIndex={dynamicZIndex}
-                  onClose={() => handleClose(win.id)} 
-                />
-              )}
-              {win.type === 'welcome' && (
-                <WelcomeApp 
-                  zIndex={dynamicZIndex}
-                  onClose={() => handleClose(win.id)} 
-                />
-              )}
+              <Suspense fallback={null}>
+                {AppComponent && (
+                  <AppComponent 
+                    isMinimized={win.isMinimized}
+                    zIndex={dynamicZIndex}
+                    onClose={() => handleClose(win.id)} 
+                    onMinimize={() => handleMinimize(win.id)}
+                  />
+                )}
+              </Suspense>
             </div>
           </div>
         );
