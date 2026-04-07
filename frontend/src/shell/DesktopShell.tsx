@@ -81,12 +81,12 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
 
   /* Desktop Icons Configuration Object */
   const desktopIcons: DesktopIconConfig[] = [
-    /* {
+    {
       id: 'my-cv',
       label: 'Curriculum.pdf',
       icon: 'bi-file-pdf-fill',
-      action: () => openFile('/dvirtos/usr/share/documents/cv.pdf')
-    }, */
+      action: () => openFile('/dvirtos/home/user/documents/cv.pdf')
+    },
     {
       id: 'sys-logoff',
       label: 'Logoff',
