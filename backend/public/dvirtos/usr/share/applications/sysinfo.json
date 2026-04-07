@@ -1,7 +1,7 @@
 {
-  "id": "sys-info",
+  "id": "sys-info-app",
   "name": "System Info",
   "icon": "bi-info-square-fill",
-  "exec": "sysinfo",
-  "description": "System Specifications"
+  "exec": "SystemInfo",
+  "description": "View system manifesto and hardware specifications"
 }
