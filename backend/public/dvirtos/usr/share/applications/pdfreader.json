@@ -1,0 +1,7 @@
+{
+  "id": "pdf-reader",
+  "name": "PDF Reader",
+  "icon": "bi-file-earmark-pdf-fill",
+  "exec": "PDFReader",
+  "description": "Professional PDF Document Viewer"
+}

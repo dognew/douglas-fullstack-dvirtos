@@ -10,6 +10,7 @@ interface WindowInstance {
   title: string;
   zIndex: number;
   Component?: React.LazyExoticComponent<React.ComponentType<any>>; // Refined: Explicit component type
+  params?: Record<string, any>;
 }
 
 interface WindowManagerProps {
@@ -32,7 +33,7 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
    * Unified Spawn Engine
    * Dynamically resolves components via AppRegistry.
    */
-  const spawnApp = (execName: string) => {
+  const spawnApp = (execName: string, params?: Record<string, any>) => {
     const Component = getAppComponent(execName);
     
     if (!Component) {
@@ -49,9 +50,20 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
       isMinimized: false, 
       title: title,
       zIndex: 100 + windowStack.length,
-      Component: Component 
+      Component: Component,
+      params: params
     }]);
     setWindowStack(prev => [...prev, newId]);
+  };
+
+  const openFile = (path: string) => {
+    if (path.endsWith('.pdf')) {
+      spawnApp('PDFReader', { file: path });
+    } else if (path.endsWith('.txt')) {
+      spawnApp('TextEditor', { file: path });
+    } else {
+      console.warn(`[WindowManager] No default application for file type: ${path}`);
+    }
   };
 
   useEffect(() => {
@@ -76,8 +88,8 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
 
   useEffect(() => {
     const handleSpawnSignal = (e: Event) => {
-      const type = (e as CustomEvent).detail?.type;
-      if (type) spawnApp(type);
+      const detail = (e as CustomEvent).detail;
+      if (detail?.type) spawnApp(detail.type, detail.params);
     };
 
     const handleToggleSignal = (e: Event) => {
@@ -89,12 +101,18 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
         handleMinimize(id);
       }
     };
+    const handleOpenFileSignal = (e: Event) => {
+      const path = (e as CustomEvent).detail?.path;
+      if (path) openFile(path);
+    };
 
     window.addEventListener('dvirtos:spawn_app', handleSpawnSignal);
     window.addEventListener('dvirtos:toggle_window', handleToggleSignal);
+    window.addEventListener('dvirtos:open_file', handleOpenFileSignal);
     return () => {
       window.removeEventListener('dvirtos:spawn_app', handleSpawnSignal);
       window.removeEventListener('dvirtos:toggle_window', handleToggleSignal);
+      window.removeEventListener('dvirtos:open_file', handleOpenFileSignal);
     };
   }, [windows, windowStack]);
 
@@ -136,6 +154,7 @@ export const WindowManager = ({ children }: WindowManagerProps) => {
                     zIndex={dynamicZIndex}
                     onClose={() => handleClose(win.id)} 
                     onMinimize={() => handleMinimize(win.id)}
+                    {...win.params}
                   />
                 )}
               </Suspense>

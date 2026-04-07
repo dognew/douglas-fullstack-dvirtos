@@ -69,6 +69,11 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
     closeMenu();
   };
 
+  const openFile = (path: string) => {
+    const event = new CustomEvent('dvirtos:open_file', { detail: { path } });
+    window.dispatchEvent(event);
+  };
+
   const toggleWindow = (id: string) => {
     const event = new CustomEvent('dvirtos:toggle_window', { detail: { id } });
     window.dispatchEvent(event);
@@ -76,6 +81,12 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
 
   /* Desktop Icons Configuration Object */
   const desktopIcons: DesktopIconConfig[] = [
+    /* {
+      id: 'my-cv',
+      label: 'Curriculum.pdf',
+      icon: 'bi-file-pdf-fill',
+      action: () => openFile('/dvirtos/usr/share/documents/cv.pdf')
+    }, */
     {
       id: 'sys-logoff',
       label: 'Logoff',
