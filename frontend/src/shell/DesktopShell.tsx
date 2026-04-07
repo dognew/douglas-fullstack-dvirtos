@@ -85,7 +85,7 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
       id: 'my-cv',
       label: 'Curriculum.pdf',
       icon: 'bi-file-pdf-fill',
-      action: () => openFile('/dvirtos/home/user/documents/cv.pdf')
+      action: () => openFile('/dvirtos/home/user/Documents/cv.pdf')
     },
     {
       id: 'sys-logoff',
