@@ -89,3 +89,5 @@ export const WelcomeApp = ({
     </Window>
   );
 };
+
+export default WelcomeApp;

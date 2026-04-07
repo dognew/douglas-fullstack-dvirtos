@@ -48,3 +48,5 @@ export const DesktopSettings = ({ onClose, zIndex }: { onClose: () => void, zInd
     </Window>
   );
 };
+
+export default DesktopSettings;

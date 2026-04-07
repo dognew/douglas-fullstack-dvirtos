@@ -2,6 +2,6 @@
   "id": "welcome",
   "name": "Welcome",
   "icon": "/dvirtos/usr/share/icons/dvirtos_logos/dvirtos-welcome.svg",
-  "exec": "welcome",
+  "exec": "WelcomeApp",
   "description": "Welcome to D-VirtOS"
 }

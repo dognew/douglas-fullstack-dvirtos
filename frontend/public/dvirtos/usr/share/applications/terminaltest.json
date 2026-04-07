@@ -2,6 +2,6 @@
   "id": "term-launcher",
   "name": "Terminal",
   "icon": "bi-terminal-fill",
-  "exec": "terminal",
+  "exec": "TerminalTest",
   "description": "System Terminal Emulator"
 }
