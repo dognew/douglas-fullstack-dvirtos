@@ -1,0 +1,10 @@
+{
+  "id": "app-calc",
+  "name": "Calculadora",
+  "exec": "Calc",
+  "icon": "bi-calculator-fill",
+  "category": "Accessories",
+  "description": "Standard D-VirtOS mathematical utility",
+  "version": "1.0",
+  "system": false
+}
