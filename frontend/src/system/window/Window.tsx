@@ -21,7 +21,9 @@ interface WindowProps {
   isMinimized?: boolean;
   zIndex?: number;
   className?: string;
-  padding?: number; 
+  padding?: number;
+  layout?: 'flex' | 'grid' | 'block';
+  direction?: 'flex-col' | 'flex-row';
   config?: WindowConfig;
   onClose?: () => void;
   onMinimize?: () => void;
@@ -43,7 +45,9 @@ export const Window = ({
   isMinimized = false,
   zIndex = 10,
   className = "",
-  padding = 4, 
+  padding = 4,
+  layout = 'flex',      // Default flex
+  direction = 'flex-col', // Default flex-col
   onClose,
   onMinimize,
   config = {
@@ -76,6 +80,7 @@ export const Window = ({
 
   const hideDecorations = config.isFrameless;
   const paddingClass = `p-${padding}`;
+  const layoutClasses = layout === 'flex' ? `${layout} ${direction}` : layout;
 
   return (
     <div 
@@ -150,7 +155,7 @@ export const Window = ({
         </div>
       )}
 
-      <div className={`flex-1 overflow-auto bg-[#0D0D0D] ${paddingClass} text-xs font-mono text-white/80 select-text cursor-x11-left-ptr`}>
+      <div className={`flex-1 overflow-auto bg-[#0D0D0D] ${layoutClasses} ${paddingClass} text-xs font-mono text-white/80 select-text cursor-x11-left-ptr`}>
         {children}
       </div>
     </div>
