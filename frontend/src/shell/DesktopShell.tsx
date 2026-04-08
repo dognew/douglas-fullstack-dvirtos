@@ -69,10 +69,10 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
     closeMenu();
   };
 
-  const openFile = (path: string) => {
+  /* const openFile = (path: string) => {
     const event = new CustomEvent('dvirtos:open_file', { detail: { path } });
     window.dispatchEvent(event);
-  };
+  }; */
 
   const toggleWindow = (id: string) => {
     const event = new CustomEvent('dvirtos:toggle_window', { detail: { id } });
@@ -81,12 +81,12 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
 
   /* Desktop Icons Configuration Object */
   const desktopIcons: DesktopIconConfig[] = [
-    {
+    /* {
       id: 'my-cv',
       label: 'Curriculum.pdf',
       icon: 'bi-file-pdf-fill',
       action: () => openFile('/dvirtos/home/user/Documents/cv.pdf')
-    },
+    }, */
     {
       id: 'sys-logoff',
       label: 'Logoff',
@@ -163,14 +163,18 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
         </div>
       </div>
 
-      {/* Main Workspace: Desktop Icons Grid & Windows (UserSpace Layer) 
-          Layer: z-10 (Windows start at z-100 inside children)
+      {/* Main Workspace: Desktop Icons Grid 
+          Refined: Using CSS Grid for column-first distribution (OS-standard)
       */}
       <main
         onContextMenu={handleContextMenu}
-        className="flex-1 relative z-10 p-6 flex flex-col flex-wrap gap-4 content-start"
+        className="flex-1 relative z-10 p-6 
+          grid grid-flow-col /* Força o preenchimento por coluna primeiro */
+          grid-rows-[repeat(auto-fill,minmax(100px,1fr))] /* Define a altura das 'slots' */
+          grid-cols-[repeat(auto-fill,minmax(90px,1fr))] /* Define a largura das 'slots' */
+          gap-4 content-start items-start justify-start overflow-hidden"
       >
-        {/* Dynamic Apps from Kernel Discovery (Meta 1) */}
+        {/* Dynamic Apps from Kernel Discovery */}
         {state.installedApps && state.installedApps.map(app => (
           <DesktopIcon
             key={app.id}
@@ -178,15 +182,16 @@ export const DesktopShell = ({ children }: DesktopShellProps) => {
               id: app.id,
               label: app.name,
               icon: app.icon,
-              action: () => spawnApp(app.exec) /* Triggers your standard window event */
+              action: () => spawnApp(app.exec)
             }}
           />
         ))}
 
-        {/* Existing Static System Icons */}
+        {/* Static System Icons */}
         {desktopIcons.map(icon => (
           <DesktopIcon key={icon.id} config={icon} />
         ))}
+
         {children}
       </main>
 
