@@ -1,7 +1,10 @@
 {
   "id": "sys-info-app",
   "name": "System Info",
-  "icon": "bi-info-square-fill",
   "exec": "SystemInfo",
-  "description": "View system manifesto and hardware specifications"
+  "icon": "bi-info-square-fill",
+  "category": "System",
+  "description": "View system manifesto and hardware specifications",
+  "version": "1.0",
+  "system": true
 }

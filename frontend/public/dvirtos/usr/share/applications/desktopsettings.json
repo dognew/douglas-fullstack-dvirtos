@@ -1,7 +1,10 @@
 {
   "id": "settings-launcher",
   "name": "Desktop Settings",
-  "icon": "bi-gear-fill",
   "exec": "DesktopSettings",
-  "description": "Customize your Desktop Environment"
+  "icon": "bi-gear-fill",
+  "category": "System",
+  "description": "Customize your Desktop Environment",
+  "version": "1.0",
+  "system": true
 }

@@ -1,7 +1,10 @@
 {
   "id": "pdf-reader",
   "name": "PDF Reader",
-  "icon": "bi-file-earmark-pdf-fill",
   "exec": "PDFReader",
-  "description": "Professional PDF Document Viewer"
+  "icon": "bi-file-earmark-pdf-fill",
+  "category": "Office",
+  "description": "Professional PDF Document Viewer",
+  "version": "1.0",
+  "system": false
 }

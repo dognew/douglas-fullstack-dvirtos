@@ -15,6 +15,9 @@ export interface AppManifest {
   icon: string;
   exec: string;
   description?: string;
+  category: string;
+  version?: string;
+  system?: boolean;
 }
 
 export const getAppComponent = (execName: string) => {

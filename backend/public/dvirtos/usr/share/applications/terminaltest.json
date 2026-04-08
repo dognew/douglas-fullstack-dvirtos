@@ -1,7 +1,10 @@
 {
   "id": "term-launcher",
   "name": "Terminal",
-  "icon": "bi-terminal-fill",
   "exec": "TerminalTest",
-  "description": "System Terminal Emulator"
+  "icon": "bi-terminal-fill",
+  "category": "System",
+  "description": "System Terminal Estatic - Window example for testing",
+  "version": "1.0",
+  "system": true
 }

@@ -1,7 +1,10 @@
 {
   "id": "welcome",
   "name": "Welcome",
-  "icon": "/dvirtos/usr/share/icons/dvirtos_logos/dvirtos-welcome.svg",
   "exec": "WelcomeApp",
-  "description": "Welcome to D-VirtOS"
+  "icon": "/dvirtos/usr/share/icons/dvirtos_logos/dvirtos-welcome.svg",
+  "category": "System",
+  "description": "Welcome to D-VirtOS",
+  "version": "1.0",
+  "system": true
 }

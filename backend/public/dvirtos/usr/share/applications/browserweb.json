@@ -2,7 +2,7 @@
   "id": "app-browser",
   "name": "Web Browser",
   "exec": "BrowserWeb",
-  "icon": "bi-globe",
+  "icon": "bi-browser-chrome",
   "category": "Internet",
   "description": "D-VirtOS Standard Web Browser",
   "version": "1.0",
