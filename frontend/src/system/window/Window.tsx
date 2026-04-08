@@ -21,15 +21,16 @@ interface WindowProps {
   isMinimized?: boolean;
   zIndex?: number;
   className?: string;
+  padding?: number; 
   config?: WindowConfig;
   onClose?: () => void;
   onMinimize?: () => void;
 }
 
 /**
- * Layer 3: Window Component (Engine v2.3)
+ * Layer 3: Window Component (Engine v2.4.1)
  * Responsibility: Handles decorations, geometric states, and dynamic Z-Index depth.
- * Refined: Maximization logic and cursor propagation fix (X11 Pointer).
+ * Fixed: JSX syntax error in Maximize button and padding initialization.
  */
 export const Window = ({ 
   title, 
@@ -42,6 +43,7 @@ export const Window = ({
   isMinimized = false,
   zIndex = 10,
   className = "",
+  padding = 4, 
   onClose,
   onMinimize,
   config = {
@@ -63,7 +65,6 @@ export const Window = ({
     isResizing 
   } = useWindowInteractions(initialX, initialY, initialW, initialH);
 
-  /* Restore Theme Injection */
   useEffect(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -74,6 +75,7 @@ export const Window = ({
   if (isMinimized) return null;
 
   const hideDecorations = config.isFrameless;
+  const paddingClass = `p-${padding}`;
 
   return (
     <div 
@@ -94,7 +96,6 @@ export const Window = ({
         borderRadius: isMaximized || hideDecorations ? '0px' : 'var(--win-radius, 8px)',
       } as React.CSSProperties}
     >
-      {/* RESTORED: Multi-direction Resizers with custom X11 cursors */}
       {!isMaximized && config.canResize && !hideDecorations && (
         <>
           <div onMouseDown={(e) => startResize(e, 'n')} className="absolute -top-1 inset-x-0 h-2 cursor-x11-size-ver z-40" />
@@ -104,7 +105,6 @@ export const Window = ({
         </>
       )}
 
-      {/* Title Bar */}
       {config.hasTitleBar && !hideDecorations && (
         <div 
           onMouseDown={startDrag}
@@ -150,8 +150,7 @@ export const Window = ({
         </div>
       )}
 
-      {/* Window Content */}
-      <div className="flex-1 overflow-auto bg-[#0D0D0D] p-4 text-xs font-mono text-white/80 select-text cursor-x11-left-ptr">
+      <div className={`flex-1 overflow-auto bg-[#0D0D0D] ${paddingClass} text-xs font-mono text-white/80 select-text cursor-x11-left-ptr`}>
         {children}
       </div>
     </div>
