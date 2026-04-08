@@ -1,0 +1,10 @@
+{
+  "id": "app-memory",
+  "name": "Memory Game",
+  "exec": "MemoryGame",
+  "icon": "bi-controller",
+  "category": "Accessories",
+  "description": "D-VirtOS Memory Training Game",
+  "version": "1.0",
+  "system": false
+}
