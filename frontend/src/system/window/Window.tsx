@@ -79,7 +79,6 @@ export const Window = ({
   if (isMinimized) return null;
 
   const hideDecorations = config.isFrameless;
-  const paddingClass = `p-${padding}`;
   const layoutClasses = layout === 'flex' ? `${layout} ${direction}` : layout;
 
   return (
@@ -155,7 +154,7 @@ export const Window = ({
         </div>
       )}
 
-      <div className={`flex-1 overflow-auto bg-[#0D0D0D] ${layoutClasses} ${paddingClass} text-xs font-mono text-white/80 select-text cursor-x11-left-ptr`}>
+      <div className={`flex-1 overflow-auto min-h-0 min-w-0 bg-[#0D0D0D] ${layoutClasses} text-xs font-mono text-white/80 select-text cursor-x11-left-ptr`} style={{ padding: `${padding * 0.25}rem` }}>
         {children}
       </div>
     </div>
