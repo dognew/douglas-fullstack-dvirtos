@@ -2,9 +2,8 @@ import { useState, useEffect, useRef, type FormEvent } from 'react';
 import { Window } from '../../system/window/Window';
 
 /**
- * App: BrowserWeb (v1.1.0)
- * Refined: Fixed padding issues and internal navigation logic.
- * Note: Browser history is sandboxed; UI sync is limited by CORS.
+ * App: BrowserWeb (v1.1.1)
+ * Refined: Added native padding property to fix UI clipping.
  */
 const BrowserWeb = ({ 
   onClose, 
@@ -19,7 +18,6 @@ const BrowserWeb = ({
   zIndex: number;
   url?: string;
 }) => {
-  // Microsoft bias removed. Standard start page: about:blank
   const defaultUrl = "about:blank"; 
   const [currentUrl, setCurrentUrl] = useState(url || defaultUrl);
   const [inputValue, setInputValue] = useState(url || defaultUrl);
@@ -50,10 +48,6 @@ const BrowserWeb = ({
     setInputValue(target);
   };
 
-  /* FIX: Internal Iframe Navigation
-     Instead of window.history (which affects the OS), 
-     we try to access the iframe's internal history.
-  */
   const goBack = () => {
     if (iframeRef.current?.contentWindow) {
       try {
@@ -82,8 +76,9 @@ const BrowserWeb = ({
       onMinimize={onMinimize}
       isMinimized={isMinimized}
       zIndex={zIndex}
-      // REFINED: Overriding default Window.tsx padding to p-0
-      className="p-0 overflow-hidden flex flex-col" 
+      // FIX: Adicionado padding nativo e removido override de classe
+      padding={0}
+      className="overflow-hidden flex flex-col" 
     >
       <div className="flex flex-col h-full w-full bg-[#0D0D0D]">
         
@@ -123,7 +118,7 @@ const BrowserWeb = ({
             src={currentUrl}
             className="w-full h-full border-none"
             onLoad={() => setIsLoading(false)}
-            sandbox="allow-scripts allow-forms allow-popups allow-modals"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
             title="Browser Viewport"
           />
         </div>
