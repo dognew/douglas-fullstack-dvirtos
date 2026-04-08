@@ -1,0 +1,10 @@
+{
+  "id": "app-browser",
+  "name": "Web Browser",
+  "exec": "BrowserWeb",
+  "icon": "bi-globe",
+  "category": "Internet",
+  "description": "D-VirtOS Standard Web Browser",
+  "version": "1.0",
+  "system": false
+}
